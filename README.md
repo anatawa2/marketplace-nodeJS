@@ -1,4 +1,5 @@
 "# marketplace-nodeJS" 
+A marketplace for buying or selling your first/second hand stuff.
 
 ## Features
 1. Resgister/Login (JWT) 🗸
