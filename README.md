@@ -2,7 +2,7 @@
 A marketplace for buying or selling your first/second hand stuff.
 
 ## Features
-1. Resgister/Login (JWT) 🗸
+1. Resgister/Login (JWT,Bcrypt) 🗸
 2. CRUD Product 🗸
 3. Realtime Chat (upcoming)
 4. 
