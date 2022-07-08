@@ -29,7 +29,7 @@ module.exports.authByToken = async (req, res, next) => {
         return next()
     } catch (e) {
         return res.status(401).json({
-            errors: { body: ['Authorization failed', e.message] }
+            status: 'Authorization failed', message: e.message
         })
     }
 

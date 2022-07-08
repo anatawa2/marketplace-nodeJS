@@ -7,8 +7,11 @@ const { findOneAndUpdate } = require('../models/User')
 module.exports.register = async (req, res) => {
     try {
         if (!req.body.email) throw 'Email is required'
-        if (!req.body.password) throw 'Password is required'
         if (!req.body.name) throw 'Name is required'
+        if (!req.body.password) throw 'Password is required'
+        if (!req.body.repassword) throw 'Re-Password is required'
+
+        if (req.body.password !== req.body.repassword) throw "Both Password Don't match"
 
         //check existing user
         const existingUser = await User.findOne({ email: req.body.email })
@@ -18,14 +21,13 @@ module.exports.register = async (req, res) => {
         const user = new User({
             email: req.body.email,
             password: hash,
-            name: req.body.name,
-            bio: req.body.bio,
+            name: req.body.name
         })
         User.saveUser(user)
 
-        user.token = await sign(user)
+        user.token = await sign(user, 86400)
         user.password = undefined
-        res.status(201).json({ user })
+        res.status(201).json({ status: "ok", user })
 
     } catch (err) {
         res.json({ err })
@@ -41,16 +43,15 @@ module.exports.login = async (req, res) => {
 
         // fetch DB 
         const user = await User.findOne({ email: req.body.email })
-        if (!user) {
-            throw 'User not found'
-        }
+        if (!user) throw 'Invalid Password or Email'
+
 
         // check matching
         const matching = await matchPassword(req.body.password, user.password)
-        if (!matching) return res.status(401).json('Invalid password or email id')
+        if (!matching) return res.status(401).json({ err: 'Invalid Password or Email' })
 
-        // gen token AND del password
-        user.token = await sign(user)
+        // gen token AND del password 
+        user.token = await sign(user, req.body.expiresIn)
         user.password = undefined
         res.json({ user })
 
@@ -63,28 +64,28 @@ module.exports.login = async (req, res) => {
 module.exports.setting = async (req, res) => {
     try {
         const user = await User.findOne({ email: req.user.email })
-        console.log('hi');
+            .select('name').select('bio')
 
         if (!user) throw 'No such user found'
-        user.password = undefined
-        user.token = req.header('Authorization').split(' ')[1]
-        return res.status(200).json({ user })
+        // user.token = req.header('Authorization').split(' ')[1]
+        return res.status(200).json({ status: 'ok', user })
 
-    } catch (e) {
-        return res.status(404).json({
-            errors: { body: [e.message] }
-        })
+    } catch (err) {
+        return res.status(400).json({ err })
     }
 }
 
 module.exports.updateSetting = async (req, res) => {
     try {
+        if (req.body.password !== req.body.repassword) throw "Both Password Don't match"
+        console.log(req.body);
         // get req data 
         const user = await User.findOne({ email: req.user.email })
         if (!user) throw 'No such user found'
         console.log(req.body);
 
         if (req.body) {
+
             const name = req.body.name ? req.body.name : user.name
             const bio = req.body.bio ? req.body.bio : user.bio
             let image = user.image
@@ -93,32 +94,28 @@ module.exports.updateSetting = async (req, res) => {
             if (req.file) {
                 image = req.file.filename
             }
-            console.log("rf", req.file);
-            console.log("rfn", req.file.filename);
             if (req.body.password) {
                 password = await hashPassword(req.body.password)
             }
 
             User.findOneAndUpdate({ email: req.user.email },
                 { name: name, bio: bio, image: image, password: password }, { new: true }, (err, data) => {
-                    if (err) res.json(data)
+                    if (err) res.json(err)
                     else {
                         data.password = undefined
                         data.token = req.header('Authorization').split(' ')[1]
-                        res.json(data)
+                        res.json({ status: 'ok' })
                     }
                 })
 
         } else {
             user.password = undefined
             user.token = req.header('Authorization').split(' ')[1]
-            return res.json(user)
+            return res.json(err)
         }
 
     } catch (err) {
-        return res.status(404).json({
-            errors: { body: [err.message] }
-        })
+        return res.status(400).json({ err })
     }
 }
 
