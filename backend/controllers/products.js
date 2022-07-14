@@ -10,11 +10,12 @@ module.exports.addProduct = async (req, res) => {
         const data = await req.body
         if (!data.desc) throw 'desc is required'
         if (!data.price) throw 'price is required'
-        if (!req.files) throw 'image is required'
+        if (!req.files) throw 'image is required' 
 
         let image = []
         for (i of req.files) {
             image.push(i.filename)
+            console.log(i.filename);
         }
         const user = await User.findOne({ email: req.user.email })
         const addProduct = new Product({
@@ -51,7 +52,7 @@ module.exports.addProduct = async (req, res) => {
         user.list.push(addProduct)
         user.save()
 
-        res.status(201).json({ user })
+        res.status(201).json(addProduct)
 
     } catch (err) {
         res.status(404).json({ err })
@@ -60,17 +61,13 @@ module.exports.addProduct = async (req, res) => {
 }
 module.exports.getRandom = async (req, res) => {
     try {
-        //get all user 
-        const list = []
+        //get all user  
         User.find((err, user) => {
             if (user) {
                 for (i of user) { // i => each USER 
                     Product.find({ owner: i._id }, (err, data) => {
                         if (data == "") { }
-                        else {
-                            list.push(data) //  each User>product
-                            res.json({ list })
-                        }
+                        else res.json(data)
                     })
                 }
             }
@@ -103,9 +100,9 @@ module.exports.getListByUser = async (req, res) => {
 
 module.exports.getSingleProduct = async (req, res) => {
     try {
-        const user = await User.findOne({ email: req.user.email })
-        const item = await Product.find({ slug: req.params.slug })
-        res.json({ user, item })
+        // const user = await User.findOne({ email: req.user.email })
+        const item = await Product.findOne({ slug: req.params.slug })
+        res.json( item )
 
 
     } catch (err) {
@@ -146,7 +143,7 @@ module.exports.updateProduct = async (req, res) => {
             image = []
             for (p of product.image) {
                 try {
-                    let filePath = `../login-react/public/images/products/${p}`
+                    let filePath = `../frontend/public/images/products/${p}`
                     fs.unlinkSync(filePath);
                 } catch (err) {
                     console.log(err);
@@ -232,7 +229,7 @@ module.exports.delProduct = async (req, res) => {
         let fs = require('fs');
         try {
             for (p of product.image) {
-                let filePath = `../login-react/public/images/products/${p}`
+                let filePath = `../frontend/public/images/products/${p}`
                 fs.unlinkSync(filePath);
             }
         }

@@ -15,16 +15,25 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 
+import jwt_decode from "jwt-decode";
+
 function Login() {
- 
+
     const navigate = useNavigate()
     const [inputs, setInputs] = useState({});
     const token = localStorage.getItem('token')
 
     useEffect(() => {
-        if (token) navigate('/') 
-    })
+        tokenHandle()
+    }, [])// eslint-disable-line react-hooks/exhaustive-deps  
 
+    const tokenHandle = () => {
+        if (token && jwt_decode(token).exp < Date.now() / 1000) {
+            localStorage.removeItem('token')
+            navigate('/')
+        }
+        if (token) navigate('/')
+    }
 
     const handleChange = (event) => {
         const name = event.target.name;
@@ -72,7 +81,6 @@ function Login() {
             })
             .catch(error => console.log('error', error));
 
-        console.log(inputs);
     }
     if (!token) {
         return (

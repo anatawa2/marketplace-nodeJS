@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from "react-router-dom";
 import Swal from 'sweetalert2'
 
-import PrimarySearchAppBar from './Search'
+import PrimarySearchAppBar from './AppBar'
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -20,35 +20,35 @@ function Profile() {
     const [inputs, setInputs] = useState({})
 
     useEffect(() => {
-        var myHeaders = new Headers();
-        myHeaders.append("Authorization", "Bearer " + token);
+        const loadMyProfile = async () => {
+            setIsLoaded(true)
+            var myHeaders = new Headers();
+            myHeaders.append("Authorization", "Bearer " + token);
 
-        var requestOptions = {
-            method: 'GET',
-            headers: myHeaders,
-            redirect: 'follow'
-        };
+            var requestOptions = {
+                method: 'GET',
+                headers: myHeaders,
+                redirect: 'follow'
+            };
 
-        fetch("http://192.168.1.125:8080/setting", requestOptions)
-            .then(response => response.json())
-            .then(result => {
-                if (result.status === 'ok') {
-                    setInputs(result.user)
-                    setIsLoaded(false)
-                } else {
-                    Swal.fire({
-                        icon: 'error',
-                        title: result.message
-                    }).then(navigate('/'))
-                }
-            })
-            .catch(error => console.log('error', error));
+            fetch("http://192.168.1.125:8080/setting", requestOptions)
+                .then(response => response.json())
+                .then(result => {
+                    if (result.status === 'ok') {
+                        setInputs(result.user)
+                        setIsLoaded(false)
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: result.message
+                        }).then(navigate('/'))
+                    }
+                })
+                .catch(error => console.log('error', error));
+        }
+        loadMyProfile()
     }, []) // eslint-disable-line react-hooks/exhaustive-deps    
 
-    const logout = () => {
-        localStorage.removeItem('token')
-        navigate('/')
-    }
 
     const handleChange = (event) => {
         const name = event.target.name;
@@ -177,7 +177,6 @@ function Profile() {
                         </Box>
                     </Box>
                 </Container>
-                <button onClick={logout}>Logout</button>
             </div>
         )
     }
