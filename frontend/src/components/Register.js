@@ -14,9 +14,11 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 
 import jwt_decode from "jwt-decode";
+import { postAxios } from '../utils/axios'
 
 function Register() {
     const navigate = useNavigate()
+    const [isLoading, setIsLoading] = useState(false)
     const [inputs, setInputs] = useState({})
 
     const token = localStorage.getItem('token')
@@ -39,48 +41,25 @@ function Register() {
         setInputs(values => ({ ...values, [name]: value }))
     }
 
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
-        var myHeaders = new Headers();
-        myHeaders.append("Content-Type", "application/json");
+        
+        setIsLoading(true)
+        const endpoint = "http://192.168.1.125:8080/register"
+        const data = await postAxios(endpoint, inputs)
+        setIsLoading(false)
 
-        var raw = JSON.stringify({
-            "email": inputs.email,
-            "name": inputs.name,
-            "password": inputs.password,
-            "repassword": inputs.repassword
-        });
-
-        var requestOptions = {
-            method: 'POST',
-            headers: myHeaders,
-            body: raw,
-            redirect: 'follow'
-        };
-
-        fetch("http://192.168.1.125:8080/register", requestOptions)
-            .then(response => response.json())
-            .then(result => {
-                if (result.status === 'ok') {
-                    Swal.fire({
-                        title: 'Register Successfully!',
-                        icon: 'success'
-                    }).then(navigate('/'))
-                } else {
-                    Swal.fire({
-                        icon: 'error',
-                        text: result.err
-                    })
-                }
+        if (data.status === 'ok') {
+            Swal.fire({ title: 'Register Successfully!', icon: 'success' })
+                .then(navigate('/'))
+        } else {
+            Swal.fire({ icon: 'error', text: data.err })
+        }
 
 
-                console.log(result)
-            })
-            .catch(error => console.log('error', error));
-
-        console.log(inputs);
     }
 
+    if (isLoading) return (<div>Loading</div>)
     if (!token) {
         return (
             <div>

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useState, useEffect } from 'react'
-import axios from 'axios'
+// import axios from 'axios'
 // import { useNavigate } from "react-router-dom";
 
 import Card from '@mui/material/Card';
@@ -15,30 +15,22 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import PrimarySearchAppBar from './AppBar'
 
 import { useParams } from 'react-router-dom';
+import { getAxios } from '../utils/axios'
 const theme = createTheme();
 
 export default function Product() {
+
   const { slug } = useParams()
   const [isLoading, setIsLoading] = useState(false)
   const [product, setProduct] = useState([])
 
-  console.log('main');
-  console.log(slug);
-  
   useEffect(() => {
-    console.log('useFX');
-    const fetchBySlug = async () => {
-      setIsLoading(true)
-      try {
-        const res = await axios.get("http://192.168.1.125:8080/product/"+slug)
-        setProduct(res.data) 
-        setIsLoading(false)
-      } catch (error) {
-        console.log(error);
-      }
 
-    }
-    fetchBySlug()
+    const endpoint = "http://192.168.1.125:8080/product/" + slug
+    setIsLoading(true)
+    getAxios(endpoint, setProduct)
+    setIsLoading(false)
+
   }, [slug])
 
   if (isLoading) return (<div>Loading</div>)
@@ -70,7 +62,7 @@ export default function Product() {
                     // 16:9
                     pt: '56.25%',
                   }}
-                  image={ product.image && product.image[0] }
+                  image={product.image && product.image[0]}
                   alt="random"
                 />
                 <CardContent sx={{ flexGrow: 1 }}>

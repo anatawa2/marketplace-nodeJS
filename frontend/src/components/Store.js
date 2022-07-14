@@ -1,7 +1,5 @@
 import * as React from 'react';
 import { useState, useEffect } from 'react'
-import axios from 'axios'
-// import { useNavigate } from "react-router-dom";
 
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
@@ -17,30 +15,20 @@ import Link from '@mui/material/Link';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import PrimarySearchAppBar from './AppBar'
 
+import { getAxios } from '../utils/axios'
+
 const theme = createTheme();
 
 export default function Album() {
 
-  // const navigate = useNavigate()
   const [isLoading, setIsLoading] = useState(false)
   const [listItem, setListItem] = useState([])
+  const endpoing = "http://192.168.1.125:8080/"
 
-  console.log('in fc');
-  
   useEffect(() => {
-    console.log('hi');
-    const fetchStore = async () => {
-      setIsLoading(true)
-      try {
-        const res = await axios.get("http://192.168.1.125:8080/")
-        setListItem(res.data)
-        setIsLoading(false)
-      } catch (error) {
-        console.log(error);
-      }
-    } 
-
-    fetchStore()
+    setIsLoading(true)
+    getAxios(endpoing, setListItem)
+    setIsLoading(false)
   }, [])
 
   if (isLoading) return (<div>Loading</div>)
@@ -96,7 +84,7 @@ export default function Album() {
                         // 16:9
                         pt: '56.25%',
                       }}
-                      image={data.image[0]}
+                      image={data.image && data.image[0]}
                       alt="random"
                     />
                     <CardContent sx={{ flexGrow: 1 }}>

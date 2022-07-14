@@ -68,7 +68,7 @@ module.exports.setting = async (req, res) => {
 
         if (!user) throw 'No such user found'
         // user.token = req.header('Authorization').split(' ')[1]
-        return res.status(200).json({ status: 'ok', user })
+        return res.status(200).json(user)
 
     } catch (err) {
         return res.status(400).json({ err })
@@ -115,7 +115,7 @@ module.exports.updateSetting = async (req, res) => {
         }
 
     } catch (err) {
-        return res.status(400).json({ err })
+        return res.status(400).json(err)
     }
 }
 

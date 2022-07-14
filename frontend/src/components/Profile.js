@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react'
-import { useNavigate } from "react-router-dom";
 import Swal from 'sweetalert2'
 
 import PrimarySearchAppBar from './AppBar'
@@ -13,86 +12,40 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 
+import { getAxios, patchAxios } from '../utils/axios'
+
+
 function Profile() {
-    const navigate = useNavigate()
-    const token = localStorage.getItem('token')
     const [isLoaded, setIsLoaded] = useState(false);
     const [inputs, setInputs] = useState({})
 
     useEffect(() => {
-        const loadMyProfile = async () => {
-            setIsLoaded(true)
-            var myHeaders = new Headers();
-            myHeaders.append("Authorization", "Bearer " + token);
+        const endpoint = 'http://192.168.1.125:8080/setting/'
+        getAxios(endpoint, setIsLoaded, setInputs) 
 
-            var requestOptions = {
-                method: 'GET',
-                headers: myHeaders,
-                redirect: 'follow'
-            };
-
-            fetch("http://192.168.1.125:8080/setting", requestOptions)
-                .then(response => response.json())
-                .then(result => {
-                    if (result.status === 'ok') {
-                        setInputs(result.user)
-                        setIsLoaded(false)
-                    } else {
-                        Swal.fire({
-                            icon: 'error',
-                            title: result.message
-                        }).then(navigate('/'))
-                    }
-                })
-                .catch(error => console.log('error', error));
-        }
-        loadMyProfile()
-    }, []) // eslint-disable-line react-hooks/exhaustive-deps    
+    }, []) // eslint-disable-line react-hooks/exhaustive-deps   
 
 
     const handleChange = (event) => {
         const name = event.target.name;
         const value = event.target.value;
-        setInputs(values => ({ ...values, [name]: value }))
-        console.log(inputs);
+        setInputs(values => ({ ...values, [name]: value })) 
     }
 
     const handleSubmit = (event) => {
+
         event.preventDefault();
-        var myHeaders = new Headers();
-        myHeaders.append("Authorization", "Bearer " + token);
+        if (inputs['password'] === inputs['repassword']) {
 
-        var formdata = new FormData();
-        for (let i in inputs) {
-            formdata.append(i, inputs[i]);
+            patchAxios('http://192.168.1.125:8080/setting', inputs)
+            Swal.fire({ title: 'Save!', icon: 'success' })
+            setInputs({...inputs, 'password': '', 'repassword': '' })
+
+        } else {
+            Swal.fire({ icon: 'error', text: "both password don't match" })
+            setInputs({...inputs, 'password': '', 'repassword': '' })
+
         }
-
-        var requestOptions = {
-            method: 'PATCH',
-            headers: myHeaders,
-            body: formdata,
-            redirect: 'follow'
-        };
-
-        fetch("http://192.168.1.125:8080/setting", requestOptions)
-            .then(response => response.json())
-            .then(result => {
-                if (result.status === 'ok') {
-                    Swal.fire({
-                        title: 'Save!',
-                        icon: 'success'
-                    }).then(() => {
-                        setInputs(values => ({ ...values, 'password': '', 'repassword': '' }))
-                    })
-                } else {
-                    Swal.fire({
-                        icon: 'error',
-                        text: result.err
-                    })
-                    console.log(result);
-                }
-            })
-            .catch(error => console.log('error', error));
     }
 
     if (isLoaded) return (<div>Loading</div>)
@@ -125,7 +78,7 @@ function Profile() {
                                         fullWidth
                                         id="name"
                                         label="Name"
-                                        value={inputs.name || ""}
+                                        value={inputs.name}
                                         onChange={handleChange}
                                     />
                                 </Grid>

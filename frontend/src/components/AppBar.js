@@ -42,8 +42,8 @@ const ResponsiveAppBar = () => {
   const about = () => navigate('/about')
 
   const logout = () => {
-    localStorage.removeItem('token')
     navigate('/')
+    localStorage.removeItem('token')
   }
 
   return (

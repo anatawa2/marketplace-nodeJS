@@ -16,6 +16,7 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 
 import jwt_decode from "jwt-decode";
+import { postAxios } from '../utils/axios'
 
 function Login() {
 
@@ -38,48 +39,25 @@ function Login() {
     const handleChange = (event) => {
         const name = event.target.name;
         const value = event.target.value;
-        setInputs(values => ({ ...values, [name]: value }))
+        setInputs({ ...inputs, [name]: value, "expiresIn": "86400" })
     }
+    console.log(inputs);
 
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
 
-        var myHeaders = new Headers();
-        myHeaders.append("Content-Type", "application/json");
+        const endpoint = "http://192.168.1.125:8080/login"  
+        const data = await postAxios(endpoint, inputs)
 
-        var raw = JSON.stringify({
-            "email": inputs.email,
-            "password": inputs.password,
-            "expiresIn": 86400 //sec
-        });
-
-        var requestOptions = {
-            method: 'POST',
-            headers: myHeaders,
-            body: raw,
-            redirect: 'follow'
-        };
-
-        fetch("http://192.168.1.125:8080/login", requestOptions)
-            .then(response => response.json())
-            .then(result => {   //swal
-                console.log(result)
-                if (result.user) {
-                    Swal.fire({
-                        title: 'Welcome!',
-                        icon: 'success'
-                    }).then((value) => {
-                        localStorage.setItem('token', result.user.token)
-                        navigate('/profile')
-                    })
-                } else {
-                    Swal.fire({
-                        icon: 'error',
-                        text: result.err
-                    })
-                }
-            })
-            .catch(error => console.log('error', error));
+        if (data.user) {
+            Swal.fire({ title: 'Welcome!', icon: 'success' })
+                .then((val) => {
+                    navigate('/')
+                    localStorage.setItem('token', data.user.token)
+                })
+        } else {
+            Swal.fire({ icon: 'error', text: data.err })
+        } 
 
     }
     if (!token) {

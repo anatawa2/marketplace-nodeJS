@@ -8,15 +8,16 @@ module.exports.addProduct = async (req, res) => {
     try {
         if (!req.body) throw 'data is required'
         const data = await req.body
+        if (!data.name) throw 'name is required'
         if (!data.desc) throw 'desc is required'
         if (!data.price) throw 'price is required'
-        if (!req.files) throw 'image is required' 
+        // if (!req.files) throw 'image is required' 
 
         let image = []
-        for (i of req.files) {
-            image.push(i.filename)
-            console.log(i.filename);
-        }
+        // for (i of req.files) {
+        //     image.push(i.filename)
+        //     console.log(i.filename);
+        // }
         const user = await User.findOne({ email: req.user.email })
         const addProduct = new Product({
             name: data.name,
