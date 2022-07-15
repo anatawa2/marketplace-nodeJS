@@ -12,6 +12,7 @@ import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
+import Link from '@mui/material/Link';
 
 import { useNavigate } from "react-router-dom"; 
 
@@ -36,14 +37,10 @@ const ResponsiveAppBar = () => {
   };
 
   const navigate = useNavigate()
-  const profile = () => navigate('/profile')
-  const search = () => navigate('/search')
-  const store = () => navigate('/store')
-  const about = () => navigate('/about')
 
   const logout = () => {
-    navigate('/')
-    localStorage.removeItem('token')
+    localStorage.removeItem('token') 
+    navigate('/temp')
   }
 
   return (
@@ -98,9 +95,9 @@ const ResponsiveAppBar = () => {
                 display: { xs: 'block', md: 'none' },
               }}
             >
-              <MenuItem onClick={search}>Search</MenuItem>
-              <MenuItem onClick={store}>My Store</MenuItem>
-              <MenuItem onClick={about}>About</MenuItem>
+              <Link href="/search" underline="none"><MenuItem>Search</MenuItem></Link>
+              <Link href="/store" underline="none"><MenuItem>My Store</MenuItem></Link>
+              <Link href="/about" underline="none"><MenuItem>About</MenuItem></Link>
             </Menu>
           </Box>
           <AdbIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} />
@@ -134,13 +131,13 @@ const ResponsiveAppBar = () => {
               href='/store'
               sx={{ my: 2, color: 'white', display: 'block' }}
             >My Store
-            </Button>  
+            </Button>
             <Button
               key='about'
               href='/about'
               sx={{ my: 2, color: 'white', display: 'block' }}
             >About
-            </Button>             
+            </Button>
 
           </Box>
 
@@ -166,13 +163,13 @@ const ResponsiveAppBar = () => {
               open={Boolean(anchorElUser)}
               onClose={handleCloseUserMenu}
             >
-              <MenuItem onClick={profile}>Profile</MenuItem>
-              <MenuItem onClick={logout}>Logout</MenuItem>
+              <Link href="/profile" underline="none" color="inherit"><MenuItem>Profile</MenuItem></Link>
+              <MenuItem onClick={logout}>Log out</MenuItem>
             </Menu>
           </Box>
         </Toolbar>
       </Container>
-    </AppBar>
+    </AppBar >
   );
 };
 export default ResponsiveAppBar;

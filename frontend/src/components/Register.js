@@ -12,9 +12,10 @@ import Box from '@mui/material/Box';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
-
-import jwt_decode from "jwt-decode";
+ 
 import { postAxios } from '../utils/axios'
+import { tokenExist } from '../utils/tokenHandler'
+
 
 function Register() {
     const navigate = useNavigate()
@@ -24,16 +25,8 @@ function Register() {
     const token = localStorage.getItem('token')
 
     useEffect(() => {
-        tokenHandle()
-    })
-
-    const tokenHandle = () => {
-        if (token && jwt_decode(token).exp < Date.now() / 1000) {
-            localStorage.removeItem('token')
-            navigate('/')
-        }
-        if (token) navigate('/')
-    }
+        if (tokenExist()) navigate('/') 
+    })     
 
     const handleChange = (event) => {
         const name = event.target.name;

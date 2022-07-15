@@ -8,6 +8,7 @@ import About from './components/About'
 import Product from './components/Product'
 
 import AppBar from './components/AppBar'
+import { Navigate } from "react-router-dom";
 
 
 function App() {
@@ -24,6 +25,7 @@ function App() {
         <Route path="product/:slug" element={<Product />} />
 
         <Route path="appbar" element={<AppBar />} />
+        <Route path="temp" element={<Navigate to="/"/>} />
 
       </Routes> 
   );

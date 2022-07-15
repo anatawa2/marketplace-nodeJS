@@ -7,7 +7,7 @@ axios.defaults.headers.common = { 'Authorization': `bearer ${token}` }
 export async function getAxios(endpoint, setdata) {
     try {
         const res = await axios.get(endpoint)
-        setdata(res.data)
+        if (res.data) setdata(res.data)
     } catch (error) {
         console.log(error);
     }

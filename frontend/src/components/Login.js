@@ -14,9 +14,9 @@ import Box from '@mui/material/Box';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
-
-import jwt_decode from "jwt-decode";
+ 
 import { postAxios } from '../utils/axios'
+import { tokenExist } from '../utils/tokenHandler'
 
 function Login() {
 
@@ -25,16 +25,9 @@ function Login() {
     const token = localStorage.getItem('token')
 
     useEffect(() => {
-        tokenHandle()
+        if (tokenExist()) navigate('/') 
     }, [])// eslint-disable-line react-hooks/exhaustive-deps  
-
-    const tokenHandle = () => {
-        if (token && jwt_decode(token).exp < Date.now() / 1000) {
-            localStorage.removeItem('token')
-            navigate('/')
-        }
-        if (token) navigate('/')
-    }
+     
 
     const handleChange = (event) => {
         const name = event.target.name;
@@ -46,18 +39,18 @@ function Login() {
     const handleSubmit = async (event) => {
         event.preventDefault();
 
-        const endpoint = "http://192.168.1.125:8080/login"  
+        const endpoint = "http://192.168.1.125:8080/login"
         const data = await postAxios(endpoint, inputs)
 
         if (data.user) {
             Swal.fire({ title: 'Welcome!', icon: 'success' })
                 .then((val) => {
-                    navigate('/')
                     localStorage.setItem('token', data.user.token)
+                    (navigate('/'))
                 })
         } else {
             Swal.fire({ icon: 'error', text: data.err })
-        } 
+        }
 
     }
     if (!token) {

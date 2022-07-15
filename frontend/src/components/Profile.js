@@ -11,25 +11,33 @@ import Box from '@mui/material/Box';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
+import { useNavigate } from "react-router-dom";
 
 import { getAxios, patchAxios } from '../utils/axios'
+import { tokenExist } from '../utils/tokenHandler'
+
 
 
 function Profile() {
-    const [isLoaded, setIsLoaded] = useState(false);
-    const [inputs, setInputs] = useState({})
 
+    const endpoint = 'http://192.168.1.125:8080/setting/'
+    const [isLoaded, setIsLoaded] = useState(true);
+    const [inputs, setInputs] = useState({})
+    const navigate = useNavigate()
+ 
     useEffect(() => {
-        const endpoint = 'http://192.168.1.125:8080/setting/'
-        getAxios(endpoint, setIsLoaded, setInputs) 
+        
+        if (!tokenExist()) navigate('/')   
+        getAxios(endpoint, setInputs)
+        setIsLoaded(false)
+
 
     }, []) // eslint-disable-line react-hooks/exhaustive-deps   
-
 
     const handleChange = (event) => {
         const name = event.target.name;
         const value = event.target.value;
-        setInputs(values => ({ ...values, [name]: value })) 
+        setInputs(values => ({ ...values, [name]: value }))
     }
 
     const handleSubmit = (event) => {
@@ -39,11 +47,11 @@ function Profile() {
 
             patchAxios('http://192.168.1.125:8080/setting', inputs)
             Swal.fire({ title: 'Save!', icon: 'success' })
-            setInputs({...inputs, 'password': '', 'repassword': '' })
+            setInputs({ ...inputs, 'password': '', 'repassword': '' })
 
         } else {
             Swal.fire({ icon: 'error', text: "both password don't match" })
-            setInputs({...inputs, 'password': '', 'repassword': '' })
+            setInputs({ ...inputs, 'password': '', 'repassword': '' })
 
         }
     }
@@ -78,7 +86,7 @@ function Profile() {
                                         fullWidth
                                         id="name"
                                         label="Name"
-                                        value={inputs.name}
+                                        value={inputs.name || ""}
                                         onChange={handleChange}
                                     />
                                 </Grid>
