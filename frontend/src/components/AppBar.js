@@ -14,9 +14,9 @@ import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
 import Link from '@mui/material/Link';
 
-import { useNavigate } from "react-router-dom"; 
+import { useNavigate } from "react-router-dom";
 
-const ResponsiveAppBar = () => {
+const ResponsiveAppBar = (props) => {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
 
@@ -39,7 +39,7 @@ const ResponsiveAppBar = () => {
   const navigate = useNavigate()
 
   const logout = () => {
-    localStorage.removeItem('token') 
+    localStorage.removeItem('token')
     navigate('/temp')
   }
 
@@ -105,7 +105,7 @@ const ResponsiveAppBar = () => {
             variant="h5"
             noWrap
             component="a"
-            href=""
+            href="/"
             sx={{
               mr: 2,
               display: { xs: 'flex', md: 'none' },
@@ -143,8 +143,8 @@ const ResponsiveAppBar = () => {
 
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Open settings">
-              <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
+              <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}> 
+                <Avatar alt={props.name} src={'/images/users/' + props.avatar} />
               </IconButton>
             </Tooltip>
             <Menu
@@ -163,7 +163,7 @@ const ResponsiveAppBar = () => {
               open={Boolean(anchorElUser)}
               onClose={handleCloseUserMenu}
             >
-              <Link href="/profile" underline="none" color="inherit"><MenuItem>Profile</MenuItem></Link>
+              <Link href="/setting" underline="none" color="inherit"><MenuItem>My Account</MenuItem></Link>
               <MenuItem onClick={logout}>Log out</MenuItem>
             </Menu>
           </Box>

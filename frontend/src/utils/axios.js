@@ -4,32 +4,40 @@ const token = localStorage.getItem('token')
 axios.defaults.baseURL = 'http://192.168.1.125:8080/'
 axios.defaults.headers.common = { 'Authorization': `bearer ${token}` }
 
-export async function getAxios(endpoint, setdata) {
+export async function getAxios(endpoint) {
     try {
-        const res = await axios.get(endpoint)
-        if (res.data) setdata(res.data)
-    } catch (error) {
-        console.log(error);
+        return await axios.get(endpoint)
+
+    } catch (error) { 
+        console.log('in axios',error);
     }
 }
 export async function postAxios(endpoint, inputs) {
     try {
-        const res = await axios.post(endpoint, inputs)
-        console.log(res.data);
-        return res.data
+        return await axios.post(endpoint, inputs) 
 
     } catch (error) {
-        console.log(error)
-        return (error.response.data)
+        console.log('in axios',error)
+        return error
     }
 }
 
-export function patchAxios(endpoint, inputs) {
+export async function patchAxios(endpoint, inputs) {
     try {
-        axios.patch(endpoint, inputs)
+        return await axios.patch(endpoint, inputs)
+
     } catch (error) {
-        console.log(error);
-        return error.response.data
+        console.log('in axios',error);
+        return error
+    }
+}
+
+export async function delAxios(endpoint, inputs) {
+    try {
+        return await axios.delete(endpoint, inputs)
+    } catch (error) {
+        console.log('in axios',error);
+        return error
     }
 }
 

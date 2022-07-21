@@ -1,47 +1,48 @@
 const Product = require('../models/Product')
-const Tag = require('../models/Tag')
+const Category = require('../models/Category')
 const User = require('../models/User')
 const { slugify } = require('../utils/stringUtil')
 
 module.exports.addProduct = async (req, res) => {
 
+    let a = new Date(Date.now())
+    let dateUTC = a.toUTCString().slice(0, 16)
+
     try {
+
         if (!req.body) throw 'data is required'
         const data = await req.body
         if (!data.name) throw 'name is required'
         if (!data.desc) throw 'desc is required'
         if (!data.price) throw 'price is required'
-        // if (!req.files) throw 'image is required' 
+        if (!data.category) throw 'category is required'
+        if (!data.condition) throw 'condition is required'
+        if (!req.files) throw 'image is required'
 
         let image = []
-        // for (i of req.files) {
-        //     image.push(i.filename)
-        //     console.log(i.filename);
-        // }
+        for (i of req.files) {
+            image.push(i.filename)
+        } 
         const user = await User.findOne({ email: req.user.email })
         const addProduct = new Product({
             name: data.name,
             desc: data.desc,
             price: data.price,
+            category: data.category,
+            condition: data.condition,
+            date: dateUTC,
             image: image
-
         })
-        // tagged to product
-        if (data.tagList) {
-            for (let t of data.tagList) {
-                let tagExists = await Tag.findOne({ name: t })
-                let newTag
-                if (!tagExists) {
-                    newTag = await new Tag({ name: t })
-                    newTag.tagged.push(addProduct)
-                    newTag.save()
 
-                } else {
-                    tagExists.tagged.push(addProduct)
-                    tagExists.save()
-                }
-                addProduct.tagList.push(t)
-            }
+        // tagged to product 
+        let categoryExists = await Category.findOne({ name: data.category })
+        if (categoryExists) {
+            categoryExists.categorized.push(addProduct)
+            categoryExists.save()
+        } else {
+            let newCategory = await new Category({ name: data.category })
+            newCategory.categorized.push(addProduct)
+            newCategory.save()
         }
 
         // name + last 4 char of _id to making slug
@@ -53,10 +54,10 @@ module.exports.addProduct = async (req, res) => {
         user.list.push(addProduct)
         user.save()
 
-        res.status(201).json(addProduct)
+        res.status(201).json({ status: "ok" })
 
     } catch (err) {
-        res.status(404).json({ err })
+        res.status(404).json({ err: err })
     }
 
 }
@@ -73,29 +74,24 @@ module.exports.getRandom = async (req, res) => {
                 }
             }
             else throw 'errz'
-
         })
-
-
     } catch (err) {
-        res.status(404).json({ err })
+        res.status(404).json({ err: err })
     }
 }
 module.exports.getListByUser = async (req, res) => {
     try {
-        const user = await User.findOne({ _id: req.params.slug })
-        const list = await Product.find({ owner: user._id }) //.select('name')        
-
-        console.log(user.list.toString().split(","))
-
+        const user = await User.findById({ _id: req.params.slug })
         if (!user) throw 'No such user found'
-
+        
+        const list = await Product.find({ owner: user._id })
+        
         user.password = undefined
-        user.token = req.header('Authorization').split(' ')[1]
-        return res.status(200).json({ list })
+        console.log(user); 
+        return res.status(200).json({ status: 'ok', list: list, user: user })
 
     } catch (err) {
-        res.json({ err })
+        res.json({ err: err })
     }
 }
 
@@ -103,11 +99,15 @@ module.exports.getSingleProduct = async (req, res) => {
     try {
         // const user = await User.findOne({ email: req.user.email })
         const item = await Product.findOne({ slug: req.params.slug })
-        res.json( item )
+        if (!item) throw 'no item'
+
+        const user = await User.findOne({ _id: item.owner }).select('name').select('avatar')
+        console.log(item);
+        res.json({ status: 'ok', item: item, user: user })
 
 
     } catch (err) {
-        res.json({ err })
+        res.json({ err: err })
     }
 }
 
@@ -180,7 +180,10 @@ module.exports.updateProduct = async (req, res) => {
         }
 
         Product.findOneAndUpdate({ slug: slugInfo },
-            { name: name, desc: desc, price: price, slug: slug, image: image, tagList: myTag },
+            {
+                name: name, desc: desc, price: price,
+                slug: slug, image: image, tagList: myTag
+            },
             { new: true }, (err, data) => {
                 if (err) throw 'error'
                 else return res.json({ data })
@@ -188,44 +191,38 @@ module.exports.updateProduct = async (req, res) => {
             })
 
     } catch (err) {
-        res.json({ err })
+        res.json({ err: err })
     }
 }
 
 module.exports.delProduct = async (req, res) => {
     try {
         const product = await Product.findOne({ slug: req.params.slug })
+        if (!product) throw 'Not found product to delete.'
         //verify user
         const user = await User.findOne({ email: req.user.email })
         if ((user._id).toString() != product.owner) {
-            res.status(403);
-            throw new Error('You must be the owner to delete this product');
+            res.status(403)
+            throw 'You must be the owner to delete this product'
         }
 
-        // delete product in tagged
-        if (product.tagList) {
-            for (let t of product.tagList) {
-                let tag = await Tag.findOne({ name: t }) // obj x
-                let x = []
-                for (i of tag.tagged) x.push(i) // push obj => array               
-                x.forEach((id, index) => {
-                    if (id.toString() == product._id.toString()) {
-                        tag.tagged.splice(index) // delete current tag at index position
-                        tag.save()
-                    }
-                })
-            }
-        }
+        // delete product in category 
+        let myCategory = await Category.findOne({ name: product.category })
+        let thisCategory = myCategory.categorized
+        let index = thisCategory.indexOf(product._id.toString())
+        myCategory.categorized.splice(index)
+        myCategory.save()
+
         // delete product in User
         if (product.owner == user._id.toString()) { // compare prod and owner
-            let u = user.list.toString().split(",") // array of list in User
-            u.forEach((id, index) => {
-                if (id == product._id.toString()) {
-                    user.list.splice(index) // delete current tag at index position
-                    user.save()
-                }
-            })
+            let userList = user.list.toString().split(",") // array of list in User
+            let index = userList.indexOf(product._id.toString())
+            console.log('index', index);
+            user.list.splice(index)
+            user.save()
+            console.log('save');
         }
+
         // delete file in folder
         let fs = require('fs');
         try {
@@ -235,17 +232,17 @@ module.exports.delProduct = async (req, res) => {
             }
         }
         catch (err) {
-            console.log(err)
+            console.log(err);
         }
 
         // delete product
         Product.findOneAndDelete({ slug: req.params.slug }, (err, data) => {
-            if (err) throw 'error'
-            else return res.json("delete succesful")
+            if (!err) res.json({ status: "ok", message: "Delete succesful!" })
+            else throw 'not found item'
         })
 
     } catch (err) {
-        res.json({ err })
+        res.json({ err: err })
     }
 }
 

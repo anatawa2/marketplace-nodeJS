@@ -9,6 +9,10 @@ mongoose.connect(dbUrl, {
 
 const Schema = mongoose.Schema
 
+// date.toUTCString()            // Tue, 12 May 2020 23:50:21 GMT
+// date.toLocaleDateString()     // 5/12/2020
+// date.toLocaleTimeString()     // 6:50:21 PM
+
 const productSchema = new Schema({
     name: String,
     desc: String,
@@ -16,8 +20,9 @@ const productSchema = new Schema({
     slug: String,
     owner: String,
     image: [{ type: String, default: null }],
-    date: { type: Date, default: Date.now },
-    tagList: [{ type: String, default: null }]
+    date: String,
+    category : String,
+    condition : String, 
 })
 
 // Create Model

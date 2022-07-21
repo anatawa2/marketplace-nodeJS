@@ -15,9 +15,9 @@ const userSchema = new Schema({
     password: String,
     name: String,
     bio: String,
-    image: String,
+    avatar: String,
     token: String,
-    date: { type: Date, default: Date.now },
+    date: String,
     list: [{
         type: Schema.Types.ObjectId,
         ref: "product"
