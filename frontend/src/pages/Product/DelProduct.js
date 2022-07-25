@@ -1,8 +1,8 @@
-import Swal from 'sweetalert2'
 import { useEffect } from 'react'
-import { useNavigate } from "react-router-dom";
-import { useParams } from 'react-router-dom';
+import { Swal } from '../../utils/Swal'
 import { delAxios } from '../../utils/axios'
+import { useParams } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 import { tokenExist } from '../../utils/tokenHandler'
 
 function DelProduct() {
@@ -12,15 +12,13 @@ function DelProduct() {
     const endpoint = "http://192.168.1.125:8080/product/delete/" + slug
 
     useEffect(() => {
-        if (!tokenExist()) navigate('/')
+        if (!tokenExist()) navigate('/login')
+
         const deleteProduct = async () => {
-            const res = await delAxios(endpoint)
-            if (res.data.status === 'ok') {
-                Swal.fire({ title: res.data.message, icon: 'success' })
-                navigate('/store')
-            } else {
-                Swal.fire({ icon: 'question', text: res.data.err })
-            }
+            const { data } = await delAxios(endpoint)
+            if (data.err) return Swal.err(data.err)
+            Swal.ok()
+            navigate('/store')
         }
         deleteProduct()
     }, []) // eslint-disable-line react-hooks/exhaustive-deps   

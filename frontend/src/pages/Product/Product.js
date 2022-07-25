@@ -1,18 +1,17 @@
 import * as React from 'react';
-import { useState, useEffect } from 'react'
-import Swal from 'sweetalert2'
+import { useState, useEffect } from 'react' 
 import { useNavigate } from "react-router-dom";
 
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
-import CardMedia from '@mui/material/CardMedia';
-import CssBaseline from '@mui/material/CssBaseline';
-import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
-import Container from '@mui/material/Container';
-import AppBar from '../../components/AppBar'
+import Card from '@mui/material/Card';
 import Link from '@mui/material/Link';
+import Grid from '@mui/material/Grid';
+import AppBar from '../../components/AppBar'
+import Container from '@mui/material/Container';
+import CardMedia from '@mui/material/CardMedia';
+import Typography from '@mui/material/Typography';
+import CssBaseline from '@mui/material/CssBaseline';
+import CardContent from '@mui/material/CardContent';
 
 import { useParams } from 'react-router-dom';
 import { getAxios } from '../../utils/axios'
@@ -21,27 +20,21 @@ export default function Product() {
 
   const navigate = useNavigate()
   const { slug } = useParams()
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
   const [product, setProduct] = useState([])
   const [user, setUser] = useState([])
   const endpoint = "http://192.168.1.125:8080/product/" + slug
 
   useEffect(() => {
-
-    setIsLoading(true)
-    getAxios(endpoint).then(res => {
-      console.log(res.data);
-      if (res.data.status === 'ok') {
-        setProduct(res.data.item)
-        setUser(res.data.user)
-        setIsLoading(false)
-      } else {
-        Swal.fire({ icon: 'question', text: res.data.err })
-        navigate('/')
-      }
+ 
+    getAxios(endpoint).then(({ data }) => {
+      if (!data.product) return navigate('/404')
+      setProduct(data.product)
+      setUser(data.user)
+      setIsLoading(false)
     })
 
-  }, [slug, endpoint, navigate])
+  }, [endpoint, navigate])
 
   if (isLoading) return (<div>Loading</div>)
   else return (
@@ -66,7 +59,7 @@ export default function Product() {
               <Card
                 sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}
               >
-                {product.image && product.image.map((img,idx) => (
+                {product.images && product.images.map((img, idx) => (
                   <CardMedia
                     key={idx}
                     component="img"
@@ -74,7 +67,7 @@ export default function Product() {
                       // 16:9
                       pt: '56.25%',
                     }}
-                    image={'/images/products/' + img}
+                    image={img}
                     alt="random"
                   />
                 ))}

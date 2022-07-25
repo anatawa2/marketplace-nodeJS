@@ -133,10 +133,10 @@ const ResponsiveAppBar = (props) => {
             >My Store
             </Button>
             <Button
-              key='about'
-              href='/about'
+              key='category'
+              href='/category'
               sx={{ my: 2, color: 'white', display: 'block' }}
-            >About
+            >Category
             </Button>
 
           </Box>

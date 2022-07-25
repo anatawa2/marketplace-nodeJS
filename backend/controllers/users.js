@@ -13,7 +13,8 @@ module.exports.register = async (req, res) => {
         if (!req.body.email) throw 'Email is required'
         if (!req.body.name) throw 'Name is required'
         if (!req.body.password) throw 'Password is required'
-        console.log(req.body);
+        if (req.body.password !== req.body.repassword)
+            throw "Both Password don't match"
 
         //check existing user
         const existingUser = await User.findOne({ email: req.body.email })
@@ -69,7 +70,7 @@ module.exports.setting = async (req, res) => {
 
         if (!user) throw 'No such user found'
         // user.token = req.header('Authorization').split(' ')[1]
-        return res.status(200).json({ user })
+        return res.status(200).json({ status: 'ok', user: user })
 
     } catch (err) {
         return res.status(400).json({ err: err })
@@ -78,7 +79,9 @@ module.exports.setting = async (req, res) => {
 
 module.exports.updateSetting = async (req, res) => {
     try {
-
+        
+        if (req.body.password !== req.body.repassword)
+            throw "Both Password don't match"
         // get req data 
         const user = await User.findOne({ email: req.user.email })
         if (!user) throw 'User not found'
@@ -98,13 +101,13 @@ module.exports.updateSetting = async (req, res) => {
                 // delete file in folder
                 let fs = require('fs');
                 try {
-                    let filePath = `../frontend/public/images/users/${avatar}`
+                    let filePath = `../frontend/public/${avatar}`
                     fs.unlinkSync(filePath);
                 }
                 catch (err) {
                     console.log(err);
                 }
-                avatar = req.file.filename                    
+                avatar = req.file.filename
             }
 
             if (req.body.password) {

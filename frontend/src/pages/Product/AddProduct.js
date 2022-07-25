@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from "react-router-dom";
-import Swal from 'sweetalert2'
 
-// import { useParams } from 'react-router-dom';
+import { Swal } from '../../utils/Swal'
 import { postAxios } from '../../utils/axios'
 import { tokenExist } from '../../utils/tokenHandler'
 import { FormProduct } from '../../components/FormProduct'
@@ -10,13 +9,12 @@ import { FormProduct } from '../../components/FormProduct'
 export default function AddProduct() {
 
     const navigate = useNavigate()
-    const [isLoading, setIsLoading] = useState(false)
     const [inputs, setInputs] = useState({})
-    const [selectedImages, setSelectedImages] = useState([])
     const [fileList, setFileList] = useState({})
+    const [selectedImages, setSelectedImages] = useState([])
 
     useEffect(() => {
-        if (!tokenExist()) navigate('/')
+        if (!tokenExist()) navigate('/login')
     })
 
     function onSelectFile(event) {
@@ -42,40 +40,35 @@ export default function AddProduct() {
         }
         setSelectedImages(selectedImages.filter((img) => img !== imageSrc))
     }
-
+    console.log('inputs', inputs);
     const handleChange = (event) => {
         const name = event.target.name;
         const value = event.target.value;
         setInputs(values => ({ ...values, [name]: value }))
-    } 
+    }
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-        setIsLoading(true)
 
         let formData = new FormData();
-        // IMG        
-        for (let i in fileList) {
-            formData.append('images', fileList[i])
-        }
-        // inputs
-        for (let i in inputs) {
+        for (let i in inputs) { // inputs
             formData.append(i, inputs[i])
         }
-
-        const endpoint = "http://192.168.1.125:8080/product/add"
-        const res = await postAxios(endpoint, formData)
-        if (res.data.status === 'ok') {
-            Swal.fire({ title: 'Done!', icon: 'success' })
-            setIsLoading(false)
-                (navigate('/'))
-        } else {
-            Swal.fire({ icon: 'error', text: res.data.err })
-                (navigate('/'))
+        // multer
+        let x = inputs
+        if (x.name && x.price && x.category && x.condition && x.desc) {
+            for (let i in fileList) { // IMG  
+                formData.append('images', fileList[i])
+            }
         }
+        const endpoint = "http://192.168.1.125:8080/product/add"
+        const { data } = await postAxios(endpoint, formData) 
+        if (!data.status) return Swal.err(data.err)
+        Swal.ok()
+        navigate('/product/' + data.slug)
+
     }
 
-    if (isLoading) return (<div>Loading</div>)
     if (tokenExist()) {
         return (
             <FormProduct

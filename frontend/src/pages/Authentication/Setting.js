@@ -1,31 +1,31 @@
 import { useState, useEffect } from 'react'
-import Swal from 'sweetalert2'
 
-import PrimarySearchAppBar from '../../components/AppBar'
+import Box from '@mui/material/Box';
+import Grid from '@mui/material/Grid';
+import Stack from '@mui/material/Stack';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
-import CssBaseline from '@mui/material/CssBaseline';
-import TextField from '@mui/material/TextField';
-import Grid from '@mui/material/Grid';
-import Box from '@mui/material/Box';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
-import Stack from '@mui/material/Stack';
-import { useNavigate } from "react-router-dom";
+import TextField from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
+import CssBaseline from '@mui/material/CssBaseline';
+import PrimarySearchAppBar from '../../components/AppBar'
+import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 
-import { getAxios, patchAxios } from '../../utils/axios'
+import { Swal } from '../../utils/Swal'
+import { useNavigate } from "react-router-dom";
 import { tokenExist } from '../../utils/tokenHandler'
+import { getAxios, patchAxios } from '../../utils/axios'
 
 
 
 function Profile() {
 
-    const endpoint = 'http://192.168.1.125:8080/setting/'
+    const navigate = useNavigate()
+    const [inputs, setInputs] = useState({})
     const [isLoaded, setIsLoaded] = useState(true);
     const [password, setPassword] = useState(false);
-    const [inputs, setInputs] = useState({})
-    const navigate = useNavigate()
+    const endpoint = 'http://192.168.1.125:8080/setting/'
 
     const [fileList, setFileList] = useState([])
     const [newAvatar, setnewAvatar] = useState()
@@ -34,61 +34,46 @@ function Profile() {
         const selectedFiles = event.target.files
         const imagesArray = URL.createObjectURL(selectedFiles[0])
 
-
         // setInputs(value => ({ ...value, 'avatar': imagesArray }))
         setFileList(selectedFiles)
         setnewAvatar(imagesArray)
     }
 
-    console.log('fileList', fileList);
-    console.log('inputs', inputs);
-
     useEffect(() => {
 
-        if (!tokenExist()) navigate('/')
+        if (!tokenExist()) navigate('/login')
         // GET PROFILE
-        getAxios(endpoint).then(res => {
-            setInputs(res.data.user)
+        getAxios(endpoint).then(({ data }) => { 
+            if (!data.user) return navigate('/login')
+            setInputs(data.user)
+            setIsLoaded(false)
         })
-        setIsLoaded(false)
 
     }, []) // eslint-disable-line react-hooks/exhaustive-deps   
 
     const handleChange = (event) => {
-        const name = event.target.name;
-        const value = event.target.value;
+        const name = event.target.name
+        const value = event.target.value
         setInputs(values => ({ ...values, [name]: value }))
     }
 
     const handleSubmit = (event) => {
 
-        event.preventDefault();
-        if (inputs['password'] !== inputs['repassword']) {
-            alert("both password don't match")
-            window.location.reload(false)
-        }
+        event.preventDefault()
 
-        let formData = new FormData();
-        // IMG         
-        formData.append('avatar', fileList[0])
-        // inputs
+        let formData = new FormData()
+        formData.append('avatar', fileList[0]) // IMG   
+
         for (let i in inputs) {
-            formData.append(i, inputs[i])
+            formData.append(i, inputs[i]) // inputs
         }
 
-        patchAxios(endpoint, formData).then(res => {
-            console.log('patch', res);
-            if (res.data.status === 'ok') {
-                Swal.fire({ title: 'Save!', icon: 'success' })
-                setInputs({ ...inputs, 'password': '', 'repassword': '' })
-            } else {
-                Swal.fire({ icon: 'error', text: res.data.err })
-            }
+        patchAxios(endpoint, formData).then(({ data }) => {
+            if (data.err) return Swal.err(data.err)
+            Swal.ok()
         })
+        setInputs({ ...inputs, 'password': '', 'repassword': '' })
     }
-
-
-
 
     if (isLoaded) return (<div>Loading</div>)
     else {
@@ -117,7 +102,7 @@ function Profile() {
                                     <div>
                                         {inputs.avatar
                                             ?
-                                            <img src={newAvatar || ('/images/users/' + inputs.avatar)} width="150" height="150" alt="upload" />
+                                            <img src={newAvatar || (inputs.avatar)} width="150" height="150" alt="upload" />
                                             :
                                             <img src={"/profile.jpg"} width="150" height="150" alt="upload" />
                                         }

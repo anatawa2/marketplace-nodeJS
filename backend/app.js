@@ -1,16 +1,16 @@
+const cors = require('cors')
 const express = require('express')
+const categoryRoute = require('./routes/category')
 const userRoute = require('./routes/users')
 const productRoute = require('./routes/products')
-const tagRoute = require('./routes/tags')
 const app = express()
-const cors = require('cors')
 
 app.use(express.json())
 app.use(cors())
  
 app.use(userRoute) 
 app.use(productRoute) 
-app.use(tagRoute) 
+app.use(categoryRoute) 
  
 
 app.listen(8080, function () {

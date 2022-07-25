@@ -1,21 +1,20 @@
 import * as React from 'react';
 import { useState, useEffect } from 'react'
-import Swal from 'sweetalert2'
 import { useNavigate } from "react-router-dom";
 
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
-import CardMedia from '@mui/material/CardMedia';
-import CssBaseline from '@mui/material/CssBaseline';
-import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
-import Container from '@mui/material/Container';
-import PrimarySearchAppBar from '../components/AppBar'
+import Grid from '@mui/material/Grid';
+import Card from '@mui/material/Card';
 import Link from '@mui/material/Link';
+import Container from '@mui/material/Container';
+import CardMedia from '@mui/material/CardMedia';
+import Typography from '@mui/material/Typography';
+import CardContent from '@mui/material/CardContent';
+import CssBaseline from '@mui/material/CssBaseline';
+import PrimarySearchAppBar from '../components/AppBar'
 
-import { useParams } from 'react-router-dom';
 import { getAxios } from '../utils/axios'
+import { useParams } from 'react-router-dom';
 
 function Profile() {
   const navigate = useNavigate()
@@ -28,16 +27,11 @@ function Profile() {
   useEffect(() => {
 
     setIsLoading(true)
-    getAxios(endpoint).then(res => {
-      console.log(res.data.list);
-      if (res.data.status === 'ok') {
-        setListProduct(res.data.list)
-        setProfile(res.data.user)
-        setIsLoading(false)
-      } else {
-        Swal.fire({ icon: 'question', text: 'User not found' })
-        navigate('/')
-      }
+    getAxios(endpoint).then(({ data }) => {
+      if (data.err) return navigate('/404')
+      setListProduct(data.list)
+      setProfile(data.user)
+      setIsLoading(false)
     })
 
   }, [endpoint, navigate])
@@ -58,7 +52,7 @@ function Profile() {
         >
         </Box>
 
-        <img src={'/images/users/' + profile.avatar} width="150" height="150" alt="avatar" />
+        <img src={profile.avatar} width="150" height="150" alt="avatar" />
         {profile.name}
 
         <Container sx={{ py: 3 }} maxWidth="md">
@@ -67,7 +61,7 @@ function Profile() {
             <Grid key={product._id} container spacing={4} >
               <Grid item xs={12} sm={6} md={4} >
                 <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }} >
-                  {product.image && product.image.map((img, idx) => (
+                  {product.images && product.images.map((img, idx) => (
                     <CardMedia
                       key={idx}
                       component="img"
@@ -75,7 +69,7 @@ function Profile() {
                         // 16:9
                         pt: '56.25%',
                       }}
-                      image={'/images/products/' + img}
+                      image={img}
                       alt="random"
                     />
                   ))}

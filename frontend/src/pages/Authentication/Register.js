@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from "react-router-dom";
-import Swal from 'sweetalert2'
 
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
@@ -12,7 +11,8 @@ import Box from '@mui/material/Box';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
- 
+
+import { Swal } from '../../utils/Swal'
 import { postAxios } from '../../utils/axios'
 import { tokenExist } from '../../utils/tokenHandler'
 
@@ -20,11 +20,11 @@ import { tokenExist } from '../../utils/tokenHandler'
 function Register() {
     const navigate = useNavigate()
     const [isLoading, setIsLoading] = useState(false)
-    const [inputs, setInputs] = useState({}) 
+    const [inputs, setInputs] = useState({})
 
     useEffect(() => {
-        if (tokenExist()) navigate('/') 
-    })     
+        if (tokenExist()) navigate('/')
+    })
 
     const handleChange = (event) => {
         const name = event.target.name;
@@ -33,21 +33,22 @@ function Register() {
     }
 
     const handleSubmit = async (event) => {
-        event.preventDefault();
-        
-        setIsLoading(true)
-        const endpoint = "http://192.168.1.125:8080/register"
-        const res = await postAxios(endpoint, inputs)
-        setIsLoading(false)
 
-        if (res.data.status === 'ok') {
-            Swal.fire({ title: 'Register Successfully!', icon: 'success' })
-                .then(navigate('/'))
-        } else {
-            Swal.fire({ icon: 'error', text: res.data.err })
+        setIsLoading(true)
+        event.preventDefault();
+        if (inputs['password'] !== inputs['repassword']) {
+            setInputs({ ...inputs, 'password': '', 'repassword': '' })
         }
 
+        const endpoint = "http://192.168.1.125:8080/register"
+        const { data } = await postAxios(endpoint, inputs)
 
+        if (data.err) return Swal.err(data.err)
+        if (data.status === 'ok') {
+            Swal.ok()
+            navigate('/')
+        }
+        setIsLoading(false)
     }
 
     if (isLoading) return (<div>Loading</div>)

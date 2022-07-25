@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Swal from 'sweetalert2'
+import { Swal } from '../../utils/Swal'
 // MUI
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
@@ -14,7 +14,7 @@ import Box from '@mui/material/Box';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
- 
+
 import { postAxios } from '../../utils/axios'
 import { tokenExist } from '../../utils/tokenHandler'
 
@@ -25,32 +25,26 @@ function Login() {
     const token = localStorage.getItem('token')
 
     useEffect(() => {
-        if (tokenExist()) navigate('/') 
+        if (tokenExist()) navigate('/')
     }, [])// eslint-disable-line react-hooks/exhaustive-deps  
-     
+
 
     const handleChange = (event) => {
         const name = event.target.name;
         const value = event.target.value;
         setInputs({ ...inputs, [name]: value, "expiresIn": "86400" })
     }
-    console.log(inputs);
 
     const handleSubmit = async (event) => {
         event.preventDefault();
 
         const endpoint = "http://192.168.1.125:8080/login"
-        const res = await postAxios(endpoint, inputs)
+        const { data } = await postAxios(endpoint, inputs)
 
-        if (res.data.user) {
-            Swal.fire({ title: 'Welcome!', icon: 'success' })
-                .then((val) => {
-                    localStorage.setItem('token', res.data.user.token)
-                    (navigate('/'))
-                })
-        } else {
-            Swal.fire({ icon: 'error', text: res.data.err })
-        }
+        if (!data.user) return Swal.err(data.err)
+        localStorage.setItem('token', data.user.token)
+        navigate('/')
+        Swal.ok()
 
     }
     if (!token) {

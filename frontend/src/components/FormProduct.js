@@ -1,15 +1,15 @@
+import Box from '@mui/material/Box';
+import Grid from '@mui/material/Grid';
+import Stack from '@mui/material/Stack';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
-import CssBaseline from '@mui/material/CssBaseline';
-import TextField from '@mui/material/TextField';
-import Grid from '@mui/material/Grid';
-import Box from '@mui/material/Box';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-import Typography from '@mui/material/Typography';
-import Container from '@mui/material/Container';
 import MenuItem from '@mui/material/MenuItem';
+import Container from '@mui/material/Container';
+import TextField from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
+import CssBaseline from '@mui/material/CssBaseline';
 import InputAdornment from '@mui/material/InputAdornment';
-import Stack from '@mui/material/Stack';
+import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 
 import PrimarySearchAppBar from './AppBar'
 import { categories, conditions } from '../utils/categories'
@@ -84,8 +84,8 @@ export function FormProduct({ handleSubmit, handleChange,
 
                                         <MenuItem sx={!option.icon ? { pl: 4, m: 1 } : { pl: 1, m: 1 }}
                                             key={option.value}
-                                            value={!option.icon ? option.value : undefined}
-                                            disable={option.icon ? true : false} >
+                                            value={!option.icon ? option.value : undefined} 
+                                        >
 
                                             {option.icon ? option.icon : ''} &nbsp;&nbsp;&nbsp;
                                             {option.value}

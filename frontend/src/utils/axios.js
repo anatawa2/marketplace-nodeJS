@@ -10,15 +10,17 @@ export async function getAxios(endpoint) {
 
     } catch (error) { 
         console.log('in axios',error);
+        return error.response
     }
 }
 export async function postAxios(endpoint, inputs) {
     try {
+        //return response.data.err
         return await axios.post(endpoint, inputs) 
 
     } catch (error) {
         console.log('in axios',error)
-        return error
+        return error.response
     }
 }
 
@@ -28,7 +30,7 @@ export async function patchAxios(endpoint, inputs) {
 
     } catch (error) {
         console.log('in axios',error);
-        return error
+        return error.response
     }
 }
 
@@ -37,7 +39,7 @@ export async function delAxios(endpoint, inputs) {
         return await axios.delete(endpoint, inputs)
     } catch (error) {
         console.log('in axios',error);
-        return error
+        return error.response
     }
 }
 

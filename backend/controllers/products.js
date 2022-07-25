@@ -1,28 +1,29 @@
+const User = require('../models/User')
 const Product = require('../models/Product')
 const Category = require('../models/Category')
-const User = require('../models/User')
 const { slugify } = require('../utils/stringUtil')
 
-module.exports.addProduct = async (req, res) => {
+let a = new Date(Date.now())
+let dateUTC = a.toUTCString().slice(0, 16)
 
-    let a = new Date(Date.now())
-    let dateUTC = a.toUTCString().slice(0, 16)
+module.exports.addProduct = async (req, res) => {
 
     try {
 
         if (!req.body) throw 'data is required'
         const data = await req.body
         if (!data.name) throw 'name is required'
-        if (!data.desc) throw 'desc is required'
         if (!data.price) throw 'price is required'
         if (!data.category) throw 'category is required'
         if (!data.condition) throw 'condition is required'
-        if (!req.files) throw 'image is required'
+        if (!data.desc) throw 'desc is required'
+        if (req.files == '') throw 'image is required'
 
-        let image = []
+        let images = []
         for (i of req.files) {
-            image.push(i.filename)
-        } 
+            let path = i.destination.slice(18,) + '/' + i.filename
+            images.push(path)
+        }
         const user = await User.findOne({ email: req.user.email })
         const addProduct = new Product({
             name: data.name,
@@ -31,7 +32,7 @@ module.exports.addProduct = async (req, res) => {
             category: data.category,
             condition: data.condition,
             date: dateUTC,
-            image: image
+            images: images
         })
 
         // tagged to product 
@@ -54,7 +55,7 @@ module.exports.addProduct = async (req, res) => {
         user.list.push(addProduct)
         user.save()
 
-        res.status(201).json({ status: "ok" })
+        res.status(201).json({ status: "ok", slug: addProduct.slug })
 
     } catch (err) {
         res.status(404).json({ err: err })
@@ -83,11 +84,10 @@ module.exports.getListByUser = async (req, res) => {
     try {
         const user = await User.findById({ _id: req.params.slug })
         if (!user) throw 'No such user found'
-        
+
         const list = await Product.find({ owner: user._id })
-        
+ 
         user.password = undefined
-        console.log(user); 
         return res.status(200).json({ status: 'ok', list: list, user: user })
 
     } catch (err) {
@@ -98,13 +98,11 @@ module.exports.getListByUser = async (req, res) => {
 module.exports.getSingleProduct = async (req, res) => {
     try {
         // const user = await User.findOne({ email: req.user.email })
-        const item = await Product.findOne({ slug: req.params.slug })
-        if (!item) throw 'no item'
+        const product = await Product.findOne({ slug: req.params.slug })
+        if (!product) throw 'no item'
 
-        const user = await User.findOne({ _id: item.owner }).select('name').select('avatar')
-        console.log(item);
-        res.json({ status: 'ok', item: item, user: user })
-
+        const user = await User.findOne({ _id: product.owner }).select('name').select('avatar')
+        res.json({ status: 'ok', product: product, user: user })
 
     } catch (err) {
         res.json({ err: err })
@@ -115,78 +113,68 @@ module.exports.updateProduct = async (req, res) => {
 
     try {
 
-        // if (!req.body) throw 'Field is required'
-        const data = req.body // name : macbook
-        const slugInfo = req.params.slug;
+        const data = req.body
+        const slug = req.params.slug;
+        if (!data) throw 'Field is required'
 
         // get req data        
-        const product = await Product.findOne({ slug: slugInfo })
+        const product = await Product.findOne({ slug: slug })
         if (!product) throw 'No such item found'
 
         // verify user 
         const user = await User.findOne({ email: req.user.email })
         if ((user._id).toString() != product.owner) {
             res.status(403);
-            throw new Error('You must be the owner to modify this product');
+            throw 'You must be the owner to modify this product'
         }
 
-        //storing new data to var
+        //store new data to newvar
         const name = data.name ? data.name : product.name
         const desc = data.desc ? data.desc : product.desc
         const price = data.price ? data.price : product.price
-        const slug = slugify(name, product._id)
-        let myTag = product.tagList
-        let image = product.image
+        const category = data.category ? data.category : product.category
+        const condition = data.condition ? data.condition : product.condition
+        const newSlug = slugify(name, product._id)
 
-        // delete&put file in localfolder
-        if (req.files) {
-            let fs = require('fs');
-            image = []
-            for (p of product.image) {
+        let imagesDb = product.images
+        let delImages = data.delImages
+        let updateImages = product.images
+
+        if (delImages) {
+
+            if (delImages.length > 10) { delImages = [data.delImages] }
+            updateImages = []
+            // db = [1,2,3,4]               del = [2,3]    
+            updateImages = imagesDb.filter(value => !delImages.includes(value))
+            if (updateImages == '') throw 'image is required'
+            // delete&put file in localfolder
+            const fs = require('fs');
+            for (img of delImages) {
                 try {
-                    let filePath = `../frontend/public/images/products/${p}`
+                    let filePath = `../frontend/public/${img}`
                     fs.unlinkSync(filePath);
                 } catch (err) {
                     console.log(err);
                 }
             }
-            for (p of req.files) {
-                image.push(p.filename)
-            }
         }
-        // add tag to product         
-        if (data.tagList) {
-            myTag = []
-            for (let t of data.tagList) {
-                let tagExists = await Tag.findOne({ name: t })
-                let newTag
-                if (!tagExists) {
-                    newTag = await new Tag({ name: t })
-                    newTag.tagged.push(product)
-                    newTag.save()
 
-                } else {
-                    for (check of tagExists.tagged) {
-                        if (check != product.id) {
-                            tagExists.tagged.push(product)
-                            tagExists.save()
-                            break
-                        }
-                    }
-                }
-                myTag.push(t)
-                console.log(myTag);
+        if (req.files) {
+            for (img of req.files) {
+                let path = img.destination.slice(18,) + '/' + img.filename
+                updateImages.push(path)
             }
         }
 
-        Product.findOneAndUpdate({ slug: slugInfo },
+        Product.findOneAndUpdate({ slug: slug },
             {
-                name: name, desc: desc, price: price,
-                slug: slug, image: image, tagList: myTag
+                name: name, desc: desc, price: price, slug: newSlug,
+                images: updateImages, category: category,
+                condition: condition, data: dateUTC
             },
             { new: true }, (err, data) => {
-                if (err) throw 'error'
-                else return res.json({ data })
+                if (!err) return res.json({ status: "ok", slug: newSlug })
+                else throw 'error'
 
             })
 
@@ -210,7 +198,7 @@ module.exports.delProduct = async (req, res) => {
         let myCategory = await Category.findOne({ name: product.category })
         let thisCategory = myCategory.categorized
         let index = thisCategory.indexOf(product._id.toString())
-        myCategory.categorized.splice(index)
+        thisCategory.splice(index)
         myCategory.save()
 
         // delete product in User
@@ -226,8 +214,8 @@ module.exports.delProduct = async (req, res) => {
         // delete file in folder
         let fs = require('fs');
         try {
-            for (p of product.image) {
-                let filePath = `../frontend/public/images/products/${p}`
+            for (p of product.images) {
+                let filePath = `../frontend/public/${p}`
                 fs.unlinkSync(filePath);
             }
         }
