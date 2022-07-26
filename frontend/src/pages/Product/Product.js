@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useState, useEffect } from 'react' 
+import { useState, useEffect } from 'react'
 import { useNavigate } from "react-router-dom";
 
 import Box from '@mui/material/Box';
@@ -13,22 +13,33 @@ import Typography from '@mui/material/Typography';
 import CssBaseline from '@mui/material/CssBaseline';
 import CardContent from '@mui/material/CardContent';
 
-import { useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom'
 import { getAxios } from '../../utils/axios'
+import { tokenExist } from '../../utils/tokenHandler'
 
 export default function Product() {
 
-  const navigate = useNavigate()
   const { slug } = useParams()
-  const [isLoading, setIsLoading] = useState(true)
-  const [product, setProduct] = useState([])
+  const navigate = useNavigate()
   const [user, setUser] = useState([])
+  const [myUser, setMyUser] = useState([])
+  const [product, setProduct] = useState([])
+  const [isLoading, setIsLoading] = useState(true)
+  const myEndpoint = "http://192.168.1.125:8080/setting/"
   const endpoint = "http://192.168.1.125:8080/product/" + slug
 
+  const getMyUser = () => {
+    if (tokenExist()) {
+      getAxios(myEndpoint).then(({ data }) => {
+        setMyUser(data.user)
+      })
+    }
+  }
   useEffect(() => {
- 
+    getMyUser()
     getAxios(endpoint).then(({ data }) => {
       if (!data.product) return navigate('/404')
+      console.log(data);
       setProduct(data.product)
       setUser(data.user)
       setIsLoading(false)
@@ -39,7 +50,7 @@ export default function Product() {
   if (isLoading) return (<div>Loading</div>)
   else return (
     <div>
-      <AppBar avatar={user.avatar} name={user.name} />
+      <AppBar avatar={myUser.avatar} name={myUser.name} />
       <CssBaseline />
 
       <main>

@@ -1,8 +1,6 @@
 const User = require('../models/User')
 const { sign } = require('../utils/jwt')
-const { hashPassword, matchPassword } = require('../utils/bcrypt.js')
-const { findOneAndUpdate } = require('../models/User')
-
+const { hashPassword, matchPassword } = require('../utils/bcrypt.js') 
 
 module.exports.register = async (req, res) => {
 
@@ -78,17 +76,14 @@ module.exports.setting = async (req, res) => {
 }
 
 module.exports.updateSetting = async (req, res) => {
+
     try {
         
         if (req.body.password !== req.body.repassword)
             throw "Both Password don't match"
         // get req data 
         const user = await User.findOne({ email: req.user.email })
-        if (!user) throw 'User not found'
-
-        console.log('user', req.user);
-        console.log('file', req.file);
-        console.log('files', req.files);
+        if (!user) throw 'User not found' 
 
         if (req.body) {
 
@@ -97,7 +92,8 @@ module.exports.updateSetting = async (req, res) => {
             let avatar = user.avatar
             let password = user.password
 
-            if (req.file) {
+            const image = req.file
+            if (image) {
                 // delete file in folder
                 let fs = require('fs');
                 try {
@@ -107,7 +103,7 @@ module.exports.updateSetting = async (req, res) => {
                 catch (err) {
                     console.log(err);
                 }
-                avatar = req.file.filename
+                avatar = image.destination.slice(18,) + '/' + image.filename
             }
 
             if (req.body.password) {

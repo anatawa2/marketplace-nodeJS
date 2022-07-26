@@ -10,15 +10,13 @@ import Typography from '@mui/material/Typography';
 import CssBaseline from '@mui/material/CssBaseline';
 import InputAdornment from '@mui/material/InputAdornment';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-
-import PrimarySearchAppBar from './AppBar'
+ 
 import { categories, conditions } from '../utils/categories'
 
 export function FormProduct({ handleSubmit, handleChange,
     selectedImages, removeImages, onSelectFile, inputs }) {
     return (
-        <div>
-            <PrimarySearchAppBar />
+        <div> 
             <Container component="main" maxWidth="xs">
                 <CssBaseline />
                 <Box

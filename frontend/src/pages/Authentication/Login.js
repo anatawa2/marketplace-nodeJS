@@ -2,27 +2,28 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Swal } from '../../utils/Swal'
 // MUI
+import Box from '@mui/material/Box';
+import Grid from '@mui/material/Grid';
+import Link from '@mui/material/Link';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
-import CssBaseline from '@mui/material/CssBaseline';
-import TextField from '@mui/material/TextField';
-import FormControlLabel from '@mui/material/FormControlLabel';
+import AppBar from '../../components/AppBar'
 import Checkbox from '@mui/material/Checkbox';
-import Link from '@mui/material/Link';
-import Grid from '@mui/material/Grid';
-import Box from '@mui/material/Box';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
+import TextField from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
+import CssBaseline from '@mui/material/CssBaseline';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 
 import { postAxios } from '../../utils/axios'
 import { tokenExist } from '../../utils/tokenHandler'
 
 function Login() {
-
-    const navigate = useNavigate()
+    
+    const navigate = useNavigate() 
     const [inputs, setInputs] = useState({});
-    const token = localStorage.getItem('token')
+    const token = localStorage.getItem('token')    
 
     useEffect(() => {
         if (tokenExist()) navigate('/')
@@ -43,13 +44,14 @@ function Login() {
 
         if (!data.user) return Swal.err(data.err)
         localStorage.setItem('token', data.user.token)
-        navigate('/')
         Swal.ok()
+        navigate(0)
 
     }
     if (!token) {
         return (
             <div>
+                <AppBar name={''} />
                 <Container component="main" maxWidth="xs">
                     <CssBaseline />
                     <Box

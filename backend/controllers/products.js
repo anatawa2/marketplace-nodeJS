@@ -63,18 +63,11 @@ module.exports.addProduct = async (req, res) => {
 
 }
 module.exports.getRandom = async (req, res) => {
+
     try {
-        //get all user  
-        User.find((err, user) => {
-            if (user) {
-                for (i of user) { // i => each USER 
-                    Product.find({ owner: i._id }, (err, data) => {
-                        if (data == "") { }
-                        else res.json(data)
-                    })
-                }
-            }
-            else throw 'errz'
+        //get all user 
+        Product.find((err, data) => {
+            res.json({ status: 'ok', product: data })
         })
     } catch (err) {
         res.status(404).json({ err: err })
@@ -86,7 +79,7 @@ module.exports.getListByUser = async (req, res) => {
         if (!user) throw 'No such user found'
 
         const list = await Product.find({ owner: user._id })
- 
+
         user.password = undefined
         return res.status(200).json({ status: 'ok', list: list, user: user })
 
@@ -144,9 +137,10 @@ module.exports.updateProduct = async (req, res) => {
 
             if (delImages.length > 10) { delImages = [data.delImages] }
             updateImages = []
-            // db = [1,2,3,4]               del = [2,3]    
+            // db = [1,2,3,4]               del = [2,3]      =>  update = [1,4]
             updateImages = imagesDb.filter(value => !delImages.includes(value))
             if (updateImages == '') throw 'image is required'
+
             // delete&put file in localfolder
             const fs = require('fs');
             for (img of delImages) {
@@ -187,40 +181,42 @@ module.exports.delProduct = async (req, res) => {
     try {
         const product = await Product.findOne({ slug: req.params.slug })
         if (!product) throw 'Not found product to delete.'
+        let myCategory = await Category.findOne({ name: product.category })
+
         //verify user
         const user = await User.findOne({ email: req.user.email })
         if ((user._id).toString() != product.owner) {
             res.status(403)
             throw 'You must be the owner to delete this product'
         }
+        const productID = product._id.toString()
 
-        // delete product in category 
-        let myCategory = await Category.findOne({ name: product.category })
-        let thisCategory = myCategory.categorized
-        let index = thisCategory.indexOf(product._id.toString())
-        thisCategory.splice(index)
-        myCategory.save()
+        // compare prod and owner
+        if (product.owner == user._id.toString()) {
 
-        // delete product in User
-        if (product.owner == user._id.toString()) { // compare prod and owner
-            let userList = user.list.toString().split(",") // array of list in User
-            let index = userList.indexOf(product._id.toString())
-            console.log('index', index);
-            user.list.splice(index)
+            // delete product in User 
+            let userList = user.list
+            let indexItem = userList.indexOf(productID)
+            userList.splice(indexItem, 1)
             user.save()
-            console.log('save');
-        }
 
-        // delete file in folder
-        let fs = require('fs');
-        try {
-            for (p of product.images) {
-                let filePath = `../frontend/public/${p}`
-                fs.unlinkSync(filePath);
+            // delete product in category             
+            let thisCategory = myCategory.categorized
+            let indexCate = thisCategory.indexOf(productID)
+            thisCategory.splice(indexCate, 1)
+            myCategory.save()
+
+            // delete file in folder
+            let fs = require('fs');
+            try {
+                for (p of product.images) {
+                    let filePath = `../frontend/public/${p}`
+                    fs.unlinkSync(filePath);
+                }
             }
-        }
-        catch (err) {
-            console.log(err);
+            catch (err) {
+                console.log(err);
+            }
         }
 
         // delete product

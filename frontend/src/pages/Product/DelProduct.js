@@ -12,13 +12,13 @@ function DelProduct() {
     const endpoint = "http://192.168.1.125:8080/product/delete/" + slug
 
     useEffect(() => {
-        if (!tokenExist()) navigate('/login')
+        if (!tokenExist()) return navigate('/login')
 
         const deleteProduct = async () => {
             const { data } = await delAxios(endpoint)
             if (data.err) return Swal.err(data.err)
             Swal.ok()
-            navigate('/store')
+            navigate('/')
         }
         deleteProduct()
     }, []) // eslint-disable-line react-hooks/exhaustive-deps   

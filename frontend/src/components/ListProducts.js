@@ -11,14 +11,11 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import Link from '@mui/material/Link';
-import PrimarySearchAppBar from '../components/AppBar'
 
 function ListProducts({ listItem }) {
     return (
         <div>
-            <PrimarySearchAppBar />
             <CssBaseline />
-
             <main>
                 {/* Hero unit */}
                 <Box
@@ -27,16 +24,6 @@ function ListProducts({ listItem }) {
                     }}
                 >
                     <Container maxWidth="sm">
-                        <Typography
-                            component="h1"
-                            variant="h2"
-                            align="center"
-                            color="text.primary"
-                            gutterBottom
-                        >
-                            Album layout
-                        </Typography>
-
                         <Stack
                             sx={{ pt: 4 }}
                             direction="row"
@@ -44,7 +31,6 @@ function ListProducts({ listItem }) {
                             justifyContent="center"
                         >
                             <Button href="/product/add" variant="contained">Add Product</Button>
-                            <Button variant="outlined">Secondary action</Button>
                         </Stack>
                     </Container>
                 </Box>

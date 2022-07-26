@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import React, { useEffect, useState } from 'react'
 
 import { Swal } from '../../utils/Swal'
+import AppBar from '../../components/AppBar';
 import { useParams } from 'react-router-dom';
 import { tokenExist } from '../../utils/tokenHandler'
 import { getAxios, patchAxios } from '../../utils/axios'
@@ -10,6 +11,7 @@ import { FormProduct } from '../../components/FormProduct'
 
 function UpProduct() {
 
+    const [user, setUser] = useState('')
     const [inputs, setInputs] = useState({})
     const [fileList, setFileList] = useState({})
     const [isLoading, setIsLoading] = useState(true)
@@ -25,10 +27,11 @@ function UpProduct() {
         // GET PRODUCT 
         if (!tokenExist()) navigate('/login')
         getAxios(getEndpoint).then(({ data }) => {
-            setIsLoading(false)
 
             if (!data.product) return navigate('/404')
-            setInputs(data.product) 
+            setInputs(data.product)
+            setUser(data.user)
+            setIsLoading(false)
 
             let myImg = data.product.images
             myImg.forEach((item) => {
@@ -71,7 +74,7 @@ function UpProduct() {
     const handleSubmit = async (event) => {
         event.preventDefault();
         let formData = new FormData();
-        
+
         for (let i in inputs) { // inputs
             formData.append(i, inputs[i])
         }
@@ -92,14 +95,17 @@ function UpProduct() {
     if (isLoading) return (<div>Loading</div>)
     if (tokenExist()) {
         return (
-            <FormProduct
-                inputs={inputs}
-                handleSubmit={handleSubmit}
-                handleChange={handleChange}
-                selectedImages={selectedImages}
-                removeImages={removeImages}
-                onSelectFile={onSelectFile}
-            />
+            <div>
+                <AppBar avatar={user && user.avatar} name={user && user.name} />
+                <FormProduct
+                    inputs={inputs}
+                    handleSubmit={handleSubmit}
+                    handleChange={handleChange}
+                    selectedImages={selectedImages}
+                    removeImages={removeImages}
+                    onSelectFile={onSelectFile}
+                />
+            </div>
         )
     }
 }

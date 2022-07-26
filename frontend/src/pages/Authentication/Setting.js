@@ -5,11 +5,11 @@ import Grid from '@mui/material/Grid';
 import Stack from '@mui/material/Stack';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
+import AppBar from '../../components/AppBar';
 import Container from '@mui/material/Container';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import CssBaseline from '@mui/material/CssBaseline';
-import PrimarySearchAppBar from '../../components/AppBar'
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 
 import { Swal } from '../../utils/Swal'
@@ -30,6 +30,19 @@ function Profile() {
     const [fileList, setFileList] = useState([])
     const [newAvatar, setnewAvatar] = useState()
 
+    useEffect(() => {
+
+        if (!tokenExist()) navigate('/login')
+        // GET PROFILE
+        getAxios(endpoint).then(({ data }) => {
+            if (!data.user) return navigate('/login')
+            setInputs(data.user)
+            setIsLoaded(false)
+            console.log(data);
+        })
+
+    }, []) // eslint-disable-line react-hooks/exhaustive-deps   
+
     function onSelectFile(event) {
         const selectedFiles = event.target.files
         const imagesArray = URL.createObjectURL(selectedFiles[0])
@@ -38,18 +51,6 @@ function Profile() {
         setFileList(selectedFiles)
         setnewAvatar(imagesArray)
     }
-
-    useEffect(() => {
-
-        if (!tokenExist()) navigate('/login')
-        // GET PROFILE
-        getAxios(endpoint).then(({ data }) => { 
-            if (!data.user) return navigate('/login')
-            setInputs(data.user)
-            setIsLoaded(false)
-        })
-
-    }, []) // eslint-disable-line react-hooks/exhaustive-deps   
 
     const handleChange = (event) => {
         const name = event.target.name
@@ -60,26 +61,24 @@ function Profile() {
     const handleSubmit = (event) => {
 
         event.preventDefault()
-
         let formData = new FormData()
         formData.append('avatar', fileList[0]) // IMG   
 
         for (let i in inputs) {
             formData.append(i, inputs[i]) // inputs
         }
-
         patchAxios(endpoint, formData).then(({ data }) => {
             if (data.err) return Swal.err(data.err)
             Swal.ok()
+            setInputs({ ...inputs, 'password': '', 'repassword': '' })
         })
-        setInputs({ ...inputs, 'password': '', 'repassword': '' })
     }
 
     if (isLoaded) return (<div>Loading</div>)
     else {
         return (
             <div>
-                <PrimarySearchAppBar />
+                <AppBar avatar={inputs.avatar} name={inputs.name} />
                 <Container component="main" maxWidth="xs">
                     <CssBaseline />
                     <Box
@@ -90,46 +89,44 @@ function Profile() {
                             alignItems: 'center',
                         }}
                     >
-                        <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
+                        <Avatar sx={{ m: 1, bgcolor: 'primary.contrastText' }}>
                             <LockOutlinedIcon />
                         </Avatar>
                         <Typography component="h1" variant="h5">
                             My Profile
                         </Typography>
+
                         <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
-                            <Stack direction="row" alignItems="center" spacing={2}>
-                                <Stack direction="row" alignItems="center" spacing={2}>
-                                    <div>
-                                        {inputs.avatar
-                                            ?
-                                            <img src={newAvatar || (inputs.avatar)} width="150" height="150" alt="upload" />
-                                            :
-                                            <img src={"/profile.jpg"} width="150" height="150" alt="upload" />
-                                        }
-                                        <Button
-                                            variant="contained" component="label" >
-                                            Upload
-                                            <input name='avatar' onClick={(event) => { event.target.value = null }}
-                                                onChange={onSelectFile} type="file" accept="image/*" hidden />
-                                        </Button>
-                                    </div>
-                                </Stack>
+                            <Stack direction="column" alignItems="center" spacing={2}>
+                                {inputs.avatar
+                                    ?
+                                    <img src={newAvatar || (inputs.avatar)} width="150" height="150" alt="upload" />
+                                    :
+                                    <img src="/images/profile.jpg" width="150" height="150" alt="upload" />
+                                }
+                                <Button
+                                    variant="contained" component="label" >
+                                    Upload
+                                    <input name='avatar' onClick={(event) => { event.target.value = null }}
+                                        onChange={onSelectFile} type="file" accept="image/*" hidden />
+                                </Button>
                             </Stack>
                             <Grid container spacing={2}>
                                 <Grid item xs={12}>
-                                    <TextField
-                                        autoComplete="given-name"
-                                        name="name"
-                                        fullWidth
-                                        id="name"
-                                        label="Name"
-                                        value={inputs.name || ""}
-                                        onChange={handleChange}
-                                    />
+                                    <Typography>
+                                        <TextField
+                                            variant="outlined"
+                                            name="name"
+                                            fullWidth
+                                            id="name"
+                                            label="Name"
+                                            value={inputs.name || ""}
+                                            onChange={handleChange}
+                                        />
+                                    </Typography>
                                 </Grid>
                                 <Grid item xs={12}>
                                     <TextField
-                                        autoComplete="given-name"
                                         name="bio"
                                         fullWidth
                                         id="bio"

@@ -6,27 +6,32 @@ import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import Card from '@mui/material/Card';
 import Link from '@mui/material/Link';
+import AppBar from '../components/AppBar'
 import Container from '@mui/material/Container';
 import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
 import CardContent from '@mui/material/CardContent';
 import CssBaseline from '@mui/material/CssBaseline';
-import PrimarySearchAppBar from '../components/AppBar'
 
 import { getAxios } from '../utils/axios'
 import { useParams } from 'react-router-dom';
+import { tokenExist } from '../utils/tokenHandler'
 
 function Profile() {
-  const navigate = useNavigate()
+
   const { slug } = useParams()
+  const navigate = useNavigate()
+  const [myUser, setMyUser] = useState('')
+  const [profile, setProfile] = useState([])
   const [isLoading, setIsLoading] = useState(false)
   const [listProduct, setListProduct] = useState([])
-  const [profile, setProfile] = useState([])
+  const myEndpoint = "http://192.168.1.125:8080/setting/"
   const endpoint = "http://192.168.1.125:8080/profile/" + slug
 
   useEffect(() => {
 
     setIsLoading(true)
+    getMyUser()
     getAxios(endpoint).then(({ data }) => {
       if (data.err) return navigate('/404')
       setListProduct(data.list)
@@ -36,10 +41,19 @@ function Profile() {
 
   }, [endpoint, navigate])
 
+  const getMyUser = () => {
+    if (tokenExist()) {
+      getAxios(myEndpoint).then(({ data }) => {
+        setMyUser(data.user)
+        console.log('data', data);
+      })
+    }
+  }
+
   if (isLoading) return (<div>Loading</div>)
   else return (
     <div>
-      <PrimarySearchAppBar />
+      <AppBar avatar={myUser.avatar} name={myUser.name} />
       <CssBaseline />
       <main>
         {/* Hero unit */}

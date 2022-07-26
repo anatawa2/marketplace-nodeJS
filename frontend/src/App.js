@@ -6,7 +6,7 @@ import Login from './pages/Authentication/Login'
 import Setting from './pages/Authentication/Setting'
 import Register from './pages/Authentication/Register'
 
-import Store from './pages/Store'
+import Home from './pages/Home'
 import Page404 from './pages/Page404'
 import Profile from './pages/Profile'
 
@@ -15,20 +15,19 @@ import Categories from './pages/Categories'
 import Product from './pages/Product/Product'
 import UpProduct from './pages/Product/UpProduct'
 import DelProduct from './pages/Product/DelProduct'
-import AddProduct  from './pages/Product/AddProduct'
+import AddProduct from './pages/Product/AddProduct'
 
 
 function App() {
   return (
     <Routes>
-      <Route path="/" element={<Store />} />
+      <Route path="/" element={<Home />} />
       <Route path="login" element={<Login />} />
       <Route path="setting" element={<Setting />} />
       <Route path="register" element={<Register />} />
 
       <Route path="category" element={<Categories />} />
-      <Route path="category/:slug" element={<Category />} />
-      <Route path="store" element={<Store />} />
+      <Route path="category/:slug" element={<Category />} /> 
 
       <Route path="product/:slug" element={<Product />} />
       <Route path="product/add" element={<AddProduct />} />
