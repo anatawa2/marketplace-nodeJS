@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react'
 import { useNavigate } from "react-router-dom";
 
 import { Swal } from '../../utils/Swal'
-import { postAxios } from '../../utils/axios'
+import AppBar from '../../components/AppBar'
+import { getAxios, postAxios } from '../../utils/axios'
 import { tokenExist } from '../../utils/tokenHandler'
 import { FormProduct } from '../../components/FormProduct'
 
@@ -10,12 +11,20 @@ export default function AddProduct() {
 
     const navigate = useNavigate()
     const [inputs, setInputs] = useState({})
+    const [myUser, setMyUser] = useState('')
     const [fileList, setFileList] = useState({})
     const [selectedImages, setSelectedImages] = useState([])
+    const userEndpoint = "http://192.168.1.125:8080/setting"
+
+    const getMyUser = async () => {
+        if (!tokenExist()) return navigate('/login')
+        const { data } = await getAxios(userEndpoint)
+        setMyUser(data.user)
+    }
 
     useEffect(() => {
-        if (!tokenExist()) navigate('/login')
-    })
+        getMyUser()
+    }, []) // eslint-disable-line react-hooks/exhaustive-deps   
 
     function onSelectFile(event) {
         const selectedFiles = event.target.files
@@ -39,8 +48,8 @@ export default function AddProduct() {
             }
         }
         setSelectedImages(selectedImages.filter((img) => img !== imageSrc))
-    }
-    console.log('inputs', inputs);
+    } 
+    
     const handleChange = (event) => {
         const name = event.target.name;
         const value = event.target.value;
@@ -62,7 +71,7 @@ export default function AddProduct() {
             }
         }
         const endpoint = "http://192.168.1.125:8080/product/add"
-        const { data } = await postAxios(endpoint, formData) 
+        const { data } = await postAxios(endpoint, formData)
         if (!data.status) return Swal.err(data.err)
         Swal.ok()
         navigate('/product/' + data.slug)
@@ -71,14 +80,18 @@ export default function AddProduct() {
 
     if (tokenExist()) {
         return (
-            <FormProduct
-                inputs={inputs}
-                handleSubmit={handleSubmit}
-                handleChange={handleChange}
-                selectedImages={selectedImages}
-                removeImages={removeImages}
-                onSelectFile={onSelectFile}
-            />
+            <>
+                <AppBar avatar={myUser.avatar} name={myUser.name} />
+                <FormProduct
+                    inputs={inputs}
+                    handleSubmit={handleSubmit}
+                    handleChange={handleChange}
+                    selectedImages={selectedImages}
+                    removeImages={removeImages}
+                    onSelectFile={onSelectFile}
+                />
+            </>
+
         )
     }
 }

@@ -11,7 +11,7 @@ import { FormProduct } from '../../components/FormProduct'
 
 function UpProduct() {
 
-    const [user, setUser] = useState('')
+    const [myUser, setMyUser] = useState('')
     const [inputs, setInputs] = useState({})
     const [fileList, setFileList] = useState({})
     const [isLoading, setIsLoading] = useState(true)
@@ -20,24 +20,32 @@ function UpProduct() {
 
     const { slug } = useParams()
     const navigate = useNavigate()
+    const userEndpoint = "http://192.168.1.125:8080/setting"
     const getEndpoint = "http://192.168.1.125:8080/product/" + slug
     const patchEndpoint = "http://192.168.1.125:8080/product/update/" + slug
 
+    const getMyUser = async () => {
+        if (!tokenExist()) return navigate('/login')
+        const { data } = await getAxios(userEndpoint)
+        setMyUser(data.user)
+    }
+
+    const getMyProduct = async () => {
+        const { data } = await getAxios(getEndpoint)
+        if (!data.product) return navigate('/404')
+        setInputs(data.product)
+        setIsLoading(false)
+
+        let myImg = data.product.images
+        myImg.forEach((item) => {
+            setSelectedImages(value => ([...value, item]))
+        })
+    }
+
     useEffect(() => {
         // GET PRODUCT 
-        if (!tokenExist()) navigate('/login')
-        getAxios(getEndpoint).then(({ data }) => {
-
-            if (!data.product) return navigate('/404')
-            setInputs(data.product)
-            setUser(data.user)
-            setIsLoading(false)
-
-            let myImg = data.product.images
-            myImg.forEach((item) => {
-                setSelectedImages(value => ([...value, item]))
-            })
-        })
+        getMyUser()
+        getMyProduct()
 
     }, []) // eslint-disable-line react-hooks/exhaustive-deps  
 
@@ -85,18 +93,18 @@ function UpProduct() {
             formData.append('delImages', delImages[i])
         }
 
-        await patchAxios(patchEndpoint, formData).then(({ data }) => {
-            if (data.err) return Swal.err(data.err)
-            Swal.ok()
-            navigate('/product/' + data.slug)
-        })
+        const { data } = await patchAxios(patchEndpoint, formData)
+        if (data.err) return Swal.err(data.err)
+        Swal.ok()
+        navigate('/product/' + data.slug)
+
     }
 
     if (isLoading) return (<div>Loading</div>)
     if (tokenExist()) {
         return (
             <div>
-                <AppBar avatar={user && user.avatar} name={user && user.name} />
+                <AppBar avatar={myUser.avatar} name={myUser.name} />
                 <FormProduct
                     inputs={inputs}
                     handleSubmit={handleSubmit}

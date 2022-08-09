@@ -1,22 +1,16 @@
 import { useState, useEffect } from 'react'
-
-import Box from '@mui/material/Box';
-import Grid from '@mui/material/Grid';
-import Stack from '@mui/material/Stack';
-import Avatar from '@mui/material/Avatar';
-import Button from '@mui/material/Button';
-import AppBar from '../../components/AppBar';
-import Container from '@mui/material/Container';
-import TextField from '@mui/material/TextField';
-import Typography from '@mui/material/Typography';
-import CssBaseline from '@mui/material/CssBaseline';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 
+import {
+    Typography, TextField, Container, Button,
+    Avatar, Stack, Grid, Box
+} from '@mui/material';
+
+import AppBar from '../../components/AppBar';
 import { Swal } from '../../utils/Swal'
 import { useNavigate } from "react-router-dom";
 import { tokenExist } from '../../utils/tokenHandler'
 import { getAxios, patchAxios } from '../../utils/axios'
-
 
 
 function Profile() {
@@ -30,16 +24,15 @@ function Profile() {
     const [fileList, setFileList] = useState([])
     const [newAvatar, setnewAvatar] = useState()
 
-    useEffect(() => {
-
+    const getMyUser = async () => {
         if (!tokenExist()) navigate('/login')
-        // GET PROFILE
-        getAxios(endpoint).then(({ data }) => {
-            if (!data.user) return navigate('/login')
-            setInputs(data.user)
-            setIsLoaded(false)
-            console.log(data);
-        })
+        const { data } = await getAxios(endpoint)
+        setInputs(data.user)
+        setIsLoaded(false)
+    }
+
+    useEffect(() => {
+        getMyUser()
 
     }, []) // eslint-disable-line react-hooks/exhaustive-deps   
 
@@ -58,7 +51,7 @@ function Profile() {
         setInputs(values => ({ ...values, [name]: value }))
     }
 
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
 
         event.preventDefault()
         let formData = new FormData()
@@ -67,11 +60,12 @@ function Profile() {
         for (let i in inputs) {
             formData.append(i, inputs[i]) // inputs
         }
-        patchAxios(endpoint, formData).then(({ data }) => {
-            if (data.err) return Swal.err(data.err)
-            Swal.ok()
-            setInputs({ ...inputs, 'password': '', 'repassword': '' })
-        })
+
+        setInputs({ ...inputs, 'password': '', 'repassword': '' })
+        const { data } = await patchAxios(endpoint, formData)
+        if (data.err) return Swal.err(data.err)
+        Swal.ok()
+
     }
 
     if (isLoaded) return (<div>Loading</div>)
@@ -80,7 +74,6 @@ function Profile() {
             <div>
                 <AppBar avatar={inputs.avatar} name={inputs.name} />
                 <Container component="main" maxWidth="xs">
-                    <CssBaseline />
                     <Box
                         sx={{
                             marginTop: 8,
@@ -111,22 +104,21 @@ function Profile() {
                                         onChange={onSelectFile} type="file" accept="image/*" hidden />
                                 </Button>
                             </Stack>
-                            <Grid container spacing={2}>
+                            <Grid container spacing={2} sx={{ mt: 1 }}>
                                 <Grid item xs={12}>
-                                    <Typography>
-                                        <TextField
-                                            variant="outlined"
-                                            name="name"
-                                            fullWidth
-                                            id="name"
-                                            label="Name"
-                                            value={inputs.name || ""}
-                                            onChange={handleChange}
-                                        />
-                                    </Typography>
+                                    <TextField
+                                        variant="filled"
+                                        name="name"
+                                        fullWidth
+                                        id="name"
+                                        label="Name"
+                                        value={inputs.name || ""}
+                                        onChange={handleChange}
+                                    />
                                 </Grid>
                                 <Grid item xs={12}>
                                     <TextField
+                                        variant="filled"
                                         name="bio"
                                         fullWidth
                                         id="bio"
@@ -143,7 +135,7 @@ function Profile() {
                                 {password && <>
                                     <Grid item xs={12}>
                                         <TextField
-                                            autoComplete="given-name"
+                                            variant="filled"
                                             name="password"
                                             fullWidth
                                             id="password"
@@ -155,7 +147,7 @@ function Profile() {
                                     </Grid>
                                     <Grid item xs={12}>
                                         <TextField
-                                            autoComplete="given-name"
+                                            variant="filled"
                                             name="repassword"
                                             fullWidth
                                             id="repassword"

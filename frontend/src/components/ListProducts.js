@@ -1,79 +1,47 @@
 import React from 'react'
 
-import Button from '@mui/material/Button';
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
-import CardMedia from '@mui/material/CardMedia';
-import CssBaseline from '@mui/material/CssBaseline';
-import Grid from '@mui/material/Grid';
-import Stack from '@mui/material/Stack';
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
-import Container from '@mui/material/Container';
-import Link from '@mui/material/Link';
 
-function ListProducts({ listItem }) {
+import { CardContent, Box, Card, Grid, Link, CardMedia, Typography, } from '@mui/material'
+
+function ListProducts({ listItem, category }) {
     return (
-        <div>
-            <CssBaseline />
-            <main>
-                {/* Hero unit */}
-                <Box
-                    sx={{
-                        bgcolor: 'background.paper',
-                    }}
-                >
-                    <Container maxWidth="sm">
-                        <Stack
-                            sx={{ pt: 4 }}
-                            direction="row"
-                            spacing={2}
-                            justifyContent="center"
-                        >
-                            <Button href="/product/add" variant="contained">Add Product</Button>
-                        </Stack>
-                    </Container>
-                </Box>
-                <Container maxWidth="md">
-                    {/* End hero unit */}
-                    <Grid container spacing={4}>
-                        {listItem && listItem.map((data) => (
-                            <Grid item key={data._id} xs={12} sm={6} md={4}>
-                                <Link href={"/product/" + data.slug} style={{ textDecoration: 'none' }} >
-                                    <Card
-                                        sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}
-                                    >
-                                        <CardMedia
-                                            component="img"
-                                            sx={{
-                                                // 16:9
-                                                pt: '56.25%',
-                                            }}
-                                            image={data.images && (data.images[0])}
-                                            alt="random"
-                                        />
-                                        <CardContent sx={{ flexGrow: 1 }}>
-                                            <Typography gutterBottom variant="h5" component="h2">
-                                                {data.name}
-                                            </Typography>
-                                            <Typography>
-                                                {data.desc}
-                                            </Typography>
-                                            <Typography>
-                                                {data.date}
-                                            </Typography>
-                                        </CardContent>
-                                    </Card>
-                                </Link>
-                            </Grid>
-                        ))}
-
+        <Box sx={{ bgcolor: '#18191A', p: 4 }}>
+            <Typography variant='h6' sx={{ mb: 3 }}>
+                {category? category:"Today's picks"} 
+            </Typography>
+            <Grid container spacing={1.5}  >
+                {listItem && listItem.map((data) => (
+                    <Grid item key={data._id} xs={6} sm={4} md={4} xl={3}>
+                        <Link href={"/product/" + data.slug} style={{ textDecoration: 'none' }} >
+                            <Card
+                                sx={{ height: '100%', display: 'flex', flexDirection: 'column', boxShadow: 'none' }}
+                            >
+                                <CardMedia
+                                    component="img"
+                                    sx={{ borderRadius: '6px' }}
+                                    image={data.images && (data.images[0])}
+                                    alt="img"
+                                />
+                                <CardContent sx={{ flexGrow: 1, bgcolor: '#18191A' }}>
+                                    <Typography variant="h6" >
+                                        ฿ {data.price}
+                                    </Typography >
+                                    <Typography variant="body1">
+                                        {data.name}
+                                    </Typography>
+                                    <Typography variant="caption" >
+                                        {data.date}
+                                    </Typography>
+                                </CardContent>
+                            </Card>
+                        </Link>
                     </Grid>
-                </Container>
-            </main>
+                ))}
+
+            </Grid>
 
             {/* Footer */}
-            <Box sx={{ bgcolor: 'background.paper', p: 6 }} component="footer">
+            <Box sx={{ bgcolor: '#d666', p: 6 }} component="footer">
                 <Typography variant="h6" align="center" gutterBottom>
                     Footer
                 </Typography>
@@ -97,7 +65,7 @@ function ListProducts({ listItem }) {
                     Register
                 </Link>
             </Grid>
-        </div>
+        </Box>
     )
 }
 

@@ -2,16 +2,17 @@ import { Navigate } from "react-router-dom";
 import { Routes, Route } from "react-router-dom";
 
 import AppBar from './components/AppBar'
+import SideBar from "./components/SideBar"
 import Login from './pages/Authentication/Login'
 import Setting from './pages/Authentication/Setting'
 import Register from './pages/Authentication/Register'
 
+import Test from './Test'
 import Home from './pages/Home'
 import Page404 from './pages/Page404'
 import Profile from './pages/Profile'
 
 import Category from './pages/Category'
-import Categories from './pages/Categories'
 import Product from './pages/Product/Product'
 import UpProduct from './pages/Product/UpProduct'
 import DelProduct from './pages/Product/DelProduct'
@@ -21,13 +22,14 @@ import AddProduct from './pages/Product/AddProduct'
 function App() {
   return (
     <Routes>
+      <Route path="/test" element={<Test />} />
       <Route path="/" element={<Home />} />
       <Route path="login" element={<Login />} />
       <Route path="setting" element={<Setting />} />
       <Route path="register" element={<Register />} />
 
-      <Route path="category" element={<Categories />} />
-      <Route path="category/:slug" element={<Category />} /> 
+      <Route path="category/:slug" element={<Category />} />
+      <Route path="dog" element={<SideBar />} />
 
       <Route path="product/:slug" element={<Product />} />
       <Route path="product/add" element={<AddProduct />} />

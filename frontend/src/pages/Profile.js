@@ -21,34 +21,32 @@ function Profile() {
 
   const { slug } = useParams()
   const navigate = useNavigate()
-  const [myUser, setMyUser] = useState('')
+  const [myUser, setMyUser] = useState({name:''})
   const [profile, setProfile] = useState([])
   const [isLoading, setIsLoading] = useState(false)
   const [listProduct, setListProduct] = useState([])
   const myEndpoint = "http://192.168.1.125:8080/setting/"
   const endpoint = "http://192.168.1.125:8080/profile/" + slug
 
-  useEffect(() => {
+  const getMyUser = async () => {
+    if (!tokenExist()) return;
+    const { data } = await getAxios(myEndpoint)
+    setMyUser(data.user)
+  }
 
+  const getProfile = async () => {
+    const { data } = await getAxios(endpoint)
+    if (data.err) return navigate('/404')
+    setListProduct(data.list)
+    setProfile(data.user)
+  }
+
+  useEffect(() => {
     setIsLoading(true)
     getMyUser()
-    getAxios(endpoint).then(({ data }) => {
-      if (data.err) return navigate('/404')
-      setListProduct(data.list)
-      setProfile(data.user)
-      setIsLoading(false)
-    })
-
-  }, [endpoint, navigate])
-
-  const getMyUser = () => {
-    if (tokenExist()) {
-      getAxios(myEndpoint).then(({ data }) => {
-        setMyUser(data.user)
-        console.log('data', data);
-      })
-    }
-  }
+    getProfile()
+    setIsLoading(false)
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps   
 
   if (isLoading) return (<div>Loading</div>)
   else return (

@@ -1,31 +1,27 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from "react-router-dom";
 
-import Box from '@mui/material/Box';
-import Link from '@mui/material/Link';
-import Grid from '@mui/material/Grid';
-import Avatar from '@mui/material/Avatar';
-import Button from '@mui/material/Button';
-import AppBar from '../../components/AppBar'
-import Container from '@mui/material/Container';
-import TextField from '@mui/material/TextField';
-import Typography from '@mui/material/Typography';
-import CssBaseline from '@mui/material/CssBaseline';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
+import {
+    Typography, TextField, Container, Button,
+    Avatar, Grid, Link, Box
+} from '@mui/material';
 
+
+import AppBar from '../../components/AppBar'
 import { Swal } from '../../utils/Swal'
 import { postAxios } from '../../utils/axios'
 import { tokenExist } from '../../utils/tokenHandler'
 
 
 function Register() {
-    const navigate = useNavigate() 
+    const navigate = useNavigate()
     const [inputs, setInputs] = useState({})
     const [isLoading, setIsLoading] = useState(false)
 
     useEffect(() => {
-        if (tokenExist()) navigate('/')
-    })
+        if (tokenExist()) navigate('/') 
+    }, []) // eslint-disable-line react-hooks/exhaustive-deps  
 
     const handleChange = (event) => {
         const name = event.target.name;
@@ -44,7 +40,7 @@ function Register() {
         const endpoint = "http://192.168.1.125:8080/register"
         const { data } = await postAxios(endpoint, inputs)
 
-        if (data.err) return Swal.err(data.err)
+        if (data.err) Swal.err(data.err)
         if (data.status === 'ok') {
             Swal.ok()
             navigate(0)
@@ -58,10 +54,9 @@ function Register() {
             <div>
                 <AppBar name={''} />
                 <Container component="main" maxWidth="xs">
-                    <CssBaseline />
                     <Box
                         sx={{
-                            marginTop: 8,
+                            marginTop: 12,
                             display: 'flex',
                             flexDirection: 'column',
                             alignItems: 'center',
@@ -77,6 +72,7 @@ function Register() {
                             <Grid container spacing={2}>
                                 <Grid item xs={12}>
                                     <TextField
+                                        variant="filled"
                                         required
                                         fullWidth
                                         id="email"
@@ -90,6 +86,7 @@ function Register() {
                                 </Grid>
                                 <Grid item xs={12}>
                                     <TextField
+                                        variant="filled"
                                         autoComplete="given-name"
                                         name="name"
                                         required
@@ -102,6 +99,7 @@ function Register() {
                                 </Grid>
                                 <Grid item xs={12}>
                                     <TextField
+                                        variant="filled"
                                         required
                                         fullWidth
                                         name="password"
@@ -115,6 +113,7 @@ function Register() {
                                 </Grid>
                                 <Grid item xs={12}>
                                     <TextField
+                                        variant="filled"
                                         required
                                         fullWidth
                                         name="repassword"

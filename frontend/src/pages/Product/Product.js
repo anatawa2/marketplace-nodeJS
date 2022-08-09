@@ -2,17 +2,12 @@ import * as React from 'react';
 import { useState, useEffect } from 'react'
 import { useNavigate } from "react-router-dom";
 
-import Box from '@mui/material/Box';
-import Card from '@mui/material/Card';
-import Link from '@mui/material/Link';
-import Grid from '@mui/material/Grid';
-import AppBar from '../../components/AppBar'
-import Container from '@mui/material/Container';
-import CardMedia from '@mui/material/CardMedia';
-import Typography from '@mui/material/Typography';
-import CssBaseline from '@mui/material/CssBaseline';
-import CardContent from '@mui/material/CardContent';
+import {
+  CardContent, Typography, CardMedia, Container,
+  Grid, Card, Link, Box
+} from '@mui/material';
 
+import AppBar from '../../components/AppBar'
 import { useParams } from 'react-router-dom'
 import { getAxios } from '../../utils/axios'
 import { tokenExist } from '../../utils/tokenHandler'
@@ -22,36 +17,36 @@ export default function Product() {
   const { slug } = useParams()
   const navigate = useNavigate()
   const [user, setUser] = useState([])
-  const [myUser, setMyUser] = useState([])
+  const [myUser, setMyUser] = useState({ name: '', avatar: '' })
   const [product, setProduct] = useState([])
   const [isLoading, setIsLoading] = useState(true)
   const myEndpoint = "http://192.168.1.125:8080/setting/"
   const endpoint = "http://192.168.1.125:8080/product/" + slug
 
-  const getMyUser = () => {
-    if (tokenExist()) {
-      getAxios(myEndpoint).then(({ data }) => {
-        setMyUser(data.user)
-      })
-    }
+  const getMyUser = async () => {
+    if (!tokenExist()) return;
+    const { data } = await getAxios(myEndpoint)
+    setMyUser(data.user)
   }
+
+  const getProduct = async () => {
+    const { data } = await getAxios(endpoint)
+    if (!data.product) return navigate('/404')
+    setProduct(data.product)
+    setUser(data.user)
+    setIsLoading(false)
+  }
+
   useEffect(() => {
     getMyUser()
-    getAxios(endpoint).then(({ data }) => {
-      if (!data.product) return navigate('/404')
-      console.log(data);
-      setProduct(data.product)
-      setUser(data.user)
-      setIsLoading(false)
-    })
+    getProduct()
 
-  }, [endpoint, navigate])
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   if (isLoading) return (<div>Loading</div>)
   else return (
     <div>
       <AppBar avatar={myUser.avatar} name={myUser.name} />
-      <CssBaseline />
 
       <main>
         {/* Hero unit */}

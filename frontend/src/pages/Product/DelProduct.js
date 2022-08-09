@@ -11,15 +11,15 @@ function DelProduct() {
     const { slug } = useParams()
     const endpoint = "http://192.168.1.125:8080/product/delete/" + slug
 
+    const deleteProduct = async () => {
+        const { data } = await delAxios(endpoint)
+        if (data.err) return Swal.err(data.err)
+        Swal.ok()
+        navigate('/')
+    }
+
     useEffect(() => {
         if (!tokenExist()) return navigate('/login')
-
-        const deleteProduct = async () => {
-            const { data } = await delAxios(endpoint)
-            if (data.err) return Swal.err(data.err)
-            Swal.ok()
-            navigate('/')
-        }
         deleteProduct()
     }, []) // eslint-disable-line react-hooks/exhaustive-deps   
 }
