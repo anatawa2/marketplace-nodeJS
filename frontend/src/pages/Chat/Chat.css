@@ -1,0 +1,37 @@
+.container {
+    margin-top: 40px;
+    height: 94%;
+    width: 100%;
+    padding: 30px;
+    position: absolute;
+    border: 1px solid white;
+}
+
+.sender {
+    padding: 20px;
+    border: 1px dashed red;
+}
+
+.chatting {
+    height: 80%;
+    width: 72%;
+    position: absolute;
+    border: 1px dashed teal;
+
+}
+
+.inputForm {
+    left: 26%;
+    right: 0;
+    bottom: 0;
+    position: absolute;
+    border: 1px dotted green;
+}
+
+
+/* sx={{
+    height: '85%',
+    width: '72%',
+    position: "absolute",
+    border: 1,
+}} */

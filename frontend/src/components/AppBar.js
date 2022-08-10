@@ -30,6 +30,7 @@ const ResponsiveAppBar = (props) => {
 
   const logout = () => {
     localStorage.removeItem('token')
+    navigate('/')
     navigate(0)
   }
 

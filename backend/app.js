@@ -1,18 +1,25 @@
-const cors = require('cors')
 const express = require('express')
-const categoryRoute = require('./routes/category')
+const app = express()
+const cors = require('cors')
+const http = require('http');
+const server = http.createServer(app);
+exports.server = server
+
+app.use(cors())
+app.use(express.json())
+
 const userRoute = require('./routes/users')
 const productRoute = require('./routes/products')
-const app = express()
+const categoryRoute = require('./routes/category')
+const chatRoute = require('./routes/chat')
+const { useSocket } = require('./controllers/chat')
+app.use(userRoute)
+app.use(chatRoute)
+app.use(productRoute)
+app.use(categoryRoute)
+useSocket()
 
-app.use(express.json())
-app.use(cors())
- 
-app.use(userRoute) 
-app.use(productRoute) 
-app.use(categoryRoute) 
- 
 
-app.listen(8080, function () {
+server.listen(8080, function () {
   console.log('CORS-enabled web server listening on port 8080')
 })

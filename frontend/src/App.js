@@ -8,6 +8,7 @@ import Setting from './pages/Authentication/Setting'
 import Register from './pages/Authentication/Register'
 
 import Test from './Test'
+import Chat from './pages/Chat/Chat'
 import Home from './pages/Home'
 import Page404 from './pages/Page404'
 import Profile from './pages/Profile'
@@ -23,6 +24,7 @@ function App() {
   return (
     <Routes>
       <Route path="/test" element={<Test />} />
+      <Route path="/chat" element={<Chat />} />
       <Route path="/" element={<Home />} />
       <Route path="login" element={<Login />} />
       <Route path="setting" element={<Setting />} />
