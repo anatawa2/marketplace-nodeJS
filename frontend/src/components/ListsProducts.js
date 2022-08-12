@@ -3,14 +3,14 @@ import React from 'react'
 
 import { CardContent, Box, Card, Grid, Link, CardMedia, Typography, } from '@mui/material'
 
-function ListProducts({ listItem, category }) {
+function ListsProducts({ listsItem, category }) {
     return (
         <Box sx={{ bgcolor: '#18191A', p: 4 }}>
             <Typography variant='h6' sx={{ mb: 3 }}>
                 {category? category:"Today's picks"} 
             </Typography>
             <Grid container spacing={1.5}  >
-                {listItem && listItem.map((data) => (
+                {listsItem && listsItem.map((data) => (
                     <Grid item key={data._id} xs={6} sm={4} md={4} xl={3}>
                         <Link href={"/product/" + data.slug} style={{ textDecoration: 'none' }} >
                             <Card
@@ -69,4 +69,4 @@ function ListProducts({ listItem, category }) {
     )
 }
 
-export default ListProducts
+export default ListsProducts

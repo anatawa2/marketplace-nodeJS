@@ -6,20 +6,20 @@ module.exports.getSingleCategory = async (req, res) => {
         const category = await Category.findOne({ name: req.params.slug })
         if (!category) throw 'not-found'
         const ids = category.categorized.toString().split(',')
-        const list = [] 
+        const lists = []
 
         if (ids != '') {
             for (item in ids) {
                 let product = await Product.findOne({ _id: ids[item] })
-                if (product !== null) list.push(product)
+                if (product !== null) lists.push(product)
 
             }
-        } 
-        res.json({ status: 'ok', list: list })
+        }
+        res.json({ status: 'ok', lists: lists })
 
     } catch (err) {
         res.status(422).json({ err: err })
     }
-} 
+}
 
 

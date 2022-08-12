@@ -36,15 +36,9 @@ module.exports.addProduct = async (req, res) => {
         })
 
         // tagged to product 
-        let categoryExists = await Category.findOne({ name: data.category })
-        if (categoryExists) {
-            categoryExists.categorized.push(addProduct)
-            categoryExists.save()
-        } else {
-            let newCategory = await new Category({ name: data.category })
-            newCategory.categorized.push(addProduct)
-            newCategory.save()
-        }
+        let category = await Category.findOne({ name: data.category })
+        category.categorized.push(addProduct)
+        category.save()
 
         // name + last 4 char of _id to making slug
         addProduct.slug = slugify(addProduct.name, addProduct._id)
@@ -52,7 +46,7 @@ module.exports.addProduct = async (req, res) => {
         addProduct.save()
 
         // user own this product
-        user.list.push(addProduct)
+        user.product_lists.push(addProduct)
         user.save()
 
         res.status(201).json({ status: "ok", slug: addProduct.slug })
@@ -78,10 +72,10 @@ module.exports.getListByUser = async (req, res) => {
         const user = await User.findById({ _id: req.params.slug })
         if (!user) throw 'No such user found'
 
-        const list = await Product.find({ owner: user._id })
+        const lists = await Product.find({ owner: user._id })
 
         user.password = undefined
-        return res.status(200).json({ status: 'ok', list: list, user: user })
+        return res.status(200).json({ status: 'ok', lists: lists, user: user })
 
     } catch (err) {
         res.json({ err: err })
@@ -116,8 +110,7 @@ module.exports.updateProduct = async (req, res) => {
 
         // verify user 
         const user = await User.findOne({ email: req.user.email })
-        if ((user._id).toString() != product.owner) {
-            res.status(403);
+        if (user._id != product.owner) {
             throw 'You must be the owner to modify this product'
         }
 
@@ -195,9 +188,9 @@ module.exports.delProduct = async (req, res) => {
         if (product.owner == user._id.toString()) {
 
             // delete product in User 
-            let userList = user.list
-            let indexItem = userList.indexOf(productID)
-            userList.splice(indexItem, 1)
+            let userLists = user.product_lists
+            let indexItem = userLists.indexOf(productID)
+            userLists.splice(indexItem, 1)
             user.save()
 
             // delete product in category             

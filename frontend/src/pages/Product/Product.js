@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 
 import {
   CardContent, Typography, CardMedia, Container,
-  Grid, Card, Link, Box
+  Grid, Card, Link, Box, Button
 } from '@mui/material';
 
 import AppBar from '../../components/AppBar'
@@ -98,6 +98,9 @@ export default function Product() {
                   <Typography>
                     Date :{product.date}
                   </Typography>
+                  <Button href={"/chat/" + user._id} variant="contained">
+                    Send Message
+                  </Button>
                 </CardContent>
               </Card>
             </Grid>

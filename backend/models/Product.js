@@ -21,9 +21,9 @@ const productSchema = new Schema({
     owner: String,
     images: [{ type: String, default: null }],
     date: String,
-    category : String,
-    condition : String, 
-})
+    category: String,
+    condition: String,
+}, { timestamps: true, })
 
 // Create Model
 const Product = mongoose.model("product", productSchema)

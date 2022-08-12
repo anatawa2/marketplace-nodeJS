@@ -1,6 +1,6 @@
 const User = require('../models/User')
 const { sign } = require('../utils/jwt')
-const { hashPassword, matchPassword } = require('../utils/bcrypt.js') 
+const { hashPassword, matchPassword } = require('../utils/bcrypt.js')
 
 module.exports.register = async (req, res) => {
 
@@ -29,7 +29,7 @@ module.exports.register = async (req, res) => {
 
         user.token = await sign(user, 86400)
         user.password = undefined
-        res.status(201).json({ status: "ok", user })
+        res.status(201).json({ status: "ok", user: user })
 
     } catch (err) {
         res.json({ err: err })
@@ -64,7 +64,7 @@ module.exports.login = async (req, res) => {
 module.exports.setting = async (req, res) => {
     try {
         const user = await User.findOne({ email: req.user.email })
-            .select('name').select('bio').select('avatar').select('date').select('list')
+            .select('name').select('bio').select('avatar').select('date')
 
         if (!user) throw 'No such user found'
         // user.token = req.header('Authorization').split(' ')[1]
@@ -78,12 +78,12 @@ module.exports.setting = async (req, res) => {
 module.exports.updateSetting = async (req, res) => {
 
     try {
-        
+
         if (req.body.password !== req.body.repassword)
             throw "Both Password don't match"
         // get req data 
         const user = await User.findOne({ email: req.user.email })
-        if (!user) throw 'User not found' 
+        if (!user) throw 'User not found'
 
         if (req.body) {
 

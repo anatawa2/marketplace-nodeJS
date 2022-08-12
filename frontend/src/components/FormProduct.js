@@ -83,7 +83,7 @@ export function FormProduct({ handleSubmit, handleChange,
                                         >
 
                                             {option.icon ? option.icon : ''} &nbsp;&nbsp;&nbsp;
-                                            {option.value}
+                                            {option.name}
                                         </MenuItem>
                                     ))}
 

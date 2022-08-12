@@ -12,7 +12,7 @@ export default function AddProduct() {
     const navigate = useNavigate()
     const [inputs, setInputs] = useState({})
     const [myUser, setMyUser] = useState('')
-    const [fileList, setFileList] = useState({})
+    const [fileLists, setFileLists] = useState({})
     const [selectedImages, setSelectedImages] = useState([])
     const userEndpoint = "http://192.168.1.125:8080/setting"
 
@@ -32,7 +32,7 @@ export default function AddProduct() {
         const imagesArray = selectedFilesArray.map((file) => {
             //blob to preview 
             let blob = URL.createObjectURL(file)
-            setFileList(values => ({ ...values, [blob.slice(-6,)]: file }))
+            setFileLists(values => ({ ...values, [blob.slice(-6,)]: file }))
             return blob
         })
         setSelectedImages(selectedImages.concat(imagesArray))
@@ -40,16 +40,16 @@ export default function AddProduct() {
 
     function removeImages(imageSrc) {
 
-        let clone = Object.entries(fileList)
-        setFileList({}) //clone to array and empty it
+        let clone = Object.entries(fileLists)
+        setFileLists({}) //clone to array and empty it
         for (let file of clone) {
             if (file[0] !== imageSrc.slice(-6,)) {
-                setFileList(values => ({ ...values, [file[0]]: file[1] }))
+                setFileLists(values => ({ ...values, [file[0]]: file[1] }))
             }
         }
         setSelectedImages(selectedImages.filter((img) => img !== imageSrc))
-    } 
-    
+    }
+
     const handleChange = (event) => {
         const name = event.target.name;
         const value = event.target.value;
@@ -66,15 +66,15 @@ export default function AddProduct() {
         // multer
         let x = inputs
         if (x.name && x.price && x.category && x.condition && x.desc) {
-            for (let i in fileList) { // IMG  
-                formData.append('images', fileList[i])
+            for (let i in fileLists) { // IMG  
+                formData.append('images', fileLists[i])
             }
         }
         const endpoint = "http://192.168.1.125:8080/product/add"
         const { data } = await postAxios(endpoint, formData)
         if (!data.status) return Swal.err(data.err)
-        Swal.ok()
-        navigate('/product/' + data.slug)
+        navigate('/profile/' + myUser._id)
+        navigate(0)
 
     }
 

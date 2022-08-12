@@ -13,7 +13,7 @@ function UpProduct() {
 
     const [myUser, setMyUser] = useState('')
     const [inputs, setInputs] = useState({})
-    const [fileList, setFileList] = useState({})
+    const [fileLists, setFileLists] = useState({})
     const [isLoading, setIsLoading] = useState(true)
     const [delImages, setDelImages] = useState([])
     const [selectedImages, setSelectedImages] = useState([])
@@ -24,28 +24,28 @@ function UpProduct() {
     const getEndpoint = "http://192.168.1.125:8080/product/" + slug
     const patchEndpoint = "http://192.168.1.125:8080/product/update/" + slug
 
-    const getMyUser = async () => {
+    const getProduct = async () => {
         if (!tokenExist()) return navigate('/login')
-        const { data } = await getAxios(userEndpoint)
-        setMyUser(data.user)
-    }
 
-    const getMyProduct = async () => {
-        const { data } = await getAxios(getEndpoint)
-        if (!data.product) return navigate('/404')
-        setInputs(data.product)
-        setIsLoading(false)
+        const { data: { user } } = await getAxios(userEndpoint)
+        setMyUser(user)
 
-        let myImg = data.product.images
+        const { data: { product } } = await getAxios(getEndpoint)
+        if (!product) return navigate('/404')
+        setInputs(product)
+
+        //verify
+        if (user._id !== product.owner) return navigate('/')
+
+        let myImg = product.images
         myImg.forEach((item) => {
             setSelectedImages(value => ([...value, item]))
         })
+        setIsLoading(false)
     }
 
     useEffect(() => {
-        // GET PRODUCT 
-        getMyUser()
-        getMyProduct()
+        getProduct()
 
     }, []) // eslint-disable-line react-hooks/exhaustive-deps  
 
@@ -55,18 +55,18 @@ function UpProduct() {
         const imagesArray = selectedFilesArray.map((file) => {
             //blob to preview 
             let blob = URL.createObjectURL(file)
-            setFileList(values => ({ ...values, [blob.slice(-6,)]: file }))
+            setFileLists(values => ({ ...values, [blob.slice(-6,)]: file }))
             return blob
         })
         setSelectedImages(selectedImages.concat(imagesArray))
     }
 
     function removeImages(imageSrc) {
-        let clone = Object.entries(fileList)
-        setFileList({}) //clone to array and empty it
+        let clone = Object.entries(fileLists)
+        setFileLists({}) //clone to array and empty it
         for (let file of clone) {
             if (file[0] !== imageSrc.slice(-6,)) {
-                setFileList(values => ({ ...values, [file[0]]: file[1] }))
+                setFileLists(values => ({ ...values, [file[0]]: file[1] }))
             }
         }
         setDelImages(prev => ([...prev.concat(imageSrc)]))
@@ -86,8 +86,8 @@ function UpProduct() {
         for (let i in inputs) { // inputs
             formData.append(i, inputs[i])
         }
-        for (let i in fileList) { // IMG      
-            formData.append('images', fileList[i])
+        for (let i in fileLists) { // IMG      
+            formData.append('images', fileLists[i])
         }
         for (let i in delImages) { // DEL
             formData.append('delImages', delImages[i])
@@ -101,7 +101,7 @@ function UpProduct() {
     }
 
     if (isLoading) return (<div>Loading</div>)
-    if (tokenExist()) {
+    else
         return (
             <div>
                 <AppBar avatar={myUser.avatar} name={myUser.name} />
@@ -115,7 +115,7 @@ function UpProduct() {
                 />
             </div>
         )
-    }
+
 }
 
 export default UpProduct

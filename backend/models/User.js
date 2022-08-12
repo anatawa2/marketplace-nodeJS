@@ -18,9 +18,17 @@ const userSchema = new Schema({
     avatar: String,
     token: String,
     date: String,
-    list: [{
+    product_lists: [{
         type: Schema.Types.ObjectId,
         ref: "product"
+    }],
+    chat_lists: [{
+        user: String,
+        room: String,
+        start: {
+            type: Boolean,
+            default: false
+        }
     }]
 })
 

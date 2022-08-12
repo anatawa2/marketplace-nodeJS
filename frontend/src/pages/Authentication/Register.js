@@ -20,7 +20,7 @@ function Register() {
     const [isLoading, setIsLoading] = useState(false)
 
     useEffect(() => {
-        if (tokenExist()) navigate('/') 
+        if (tokenExist()) navigate('/')
     }, []) // eslint-disable-line react-hooks/exhaustive-deps  
 
     const handleChange = (event) => {
@@ -43,6 +43,7 @@ function Register() {
         if (data.err) Swal.err(data.err)
         if (data.status === 'ok') {
             Swal.ok()
+            localStorage.setItem('token', data.user.token)
             navigate(0)
         }
         setIsLoading(false)

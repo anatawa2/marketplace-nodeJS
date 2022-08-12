@@ -105,6 +105,9 @@ const ResponsiveAppBar = (props) => {
                 <Link href="/store" underline="none" color="inherit">
                   <MenuItem>My Store</MenuItem>
                 </Link>
+                <Link href="/chat" underline="none" color="inherit">
+                  <MenuItem>Inbox</MenuItem>
+                </Link>
                 <MenuItem onClick={logout}>Logout</MenuItem>
               </Menu>
             </Box>}

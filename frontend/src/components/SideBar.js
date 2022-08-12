@@ -156,7 +156,7 @@ function SideBar() {
                 }
               </ListItemIcon>
               <Typography sx={{ my: 1, fontWeight: 'bold', color: '#D0D2D6' }}>
-                {cate.value}
+                {cate.name}
               </Typography>
             </ListItemButton>
           ))}

@@ -95,7 +95,7 @@ function Profile() {
                                     ?
                                     <img src={newAvatar || (inputs.avatar)} width="150" height="150" alt="upload" />
                                     :
-                                    <img src="/images/profile.jpg" width="150" height="150" alt="upload" />
+                                    <img src={newAvatar || '/images/profile.jpg'} width="150" height="150" alt="upload" />
                                 }
                                 <Button
                                     variant="contained" component="label" >

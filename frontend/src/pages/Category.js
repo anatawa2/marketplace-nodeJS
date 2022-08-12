@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import SideBar from '../components/SideBar';
 import MyAppBar from '../components/AppBar';
-import ListProducts from '../components/ListProducts';
+import ListsProducts from '../components/ListsProducts';
  
 import { getAxios } from '../utils/axios'
 import { useState, useEffect } from 'react'
@@ -19,7 +19,7 @@ function Category() {
     const { slug } = useParams()
     const navigate = useNavigate()
     const [myUser, setMyUser] = useState({ name: '' })
-    const [listItem, setListItem] = useState([])
+    const [listsItem, setListsItem] = useState([])
     const [isLoading, setIsLoading] = useState(true)
     const userEndpoint = "http://192.168.1.125:8080/setting"
     const endpoint = "http://192.168.1.125:8080/category/" + slug
@@ -30,16 +30,16 @@ function Category() {
         setMyUser(data.user)
     }
 
-    const getList = async () => {
+    const getLists = async () => {
         const { data } = await getAxios(endpoint)
         if (data.err) return navigate('/404')
-        setListItem(data.list)
+        setListsItem(data.lists)
         setIsLoading(false)
     }
 
     useEffect(() => {
         getMyUser()
-        getList()
+        getLists()
     }, []) // eslint-disable-line react-hooks/exhaustive-deps   
 
     if (isLoading) return <div>Loading</div>
@@ -51,7 +51,7 @@ function Category() {
                     <SideBar />
                 </Grid>
                 <Grid item xl={9} lg={9} md={8} xs={12} >
-                    <ListProducts listItem={listItem} category={slug} />
+                    <ListsProducts listsItem={listsItem} category={slug} />
                 </Grid>
             </Grid>
         </Stack>

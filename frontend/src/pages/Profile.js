@@ -24,7 +24,7 @@ function Profile() {
   const [myUser, setMyUser] = useState({name:''})
   const [profile, setProfile] = useState([])
   const [isLoading, setIsLoading] = useState(false)
-  const [listProduct, setListProduct] = useState([])
+  const [listsProduct, setListsProduct] = useState([])
   const myEndpoint = "http://192.168.1.125:8080/setting/"
   const endpoint = "http://192.168.1.125:8080/profile/" + slug
 
@@ -37,7 +37,7 @@ function Profile() {
   const getProfile = async () => {
     const { data } = await getAxios(endpoint)
     if (data.err) return navigate('/404')
-    setListProduct(data.list)
+    setListsProduct(data.lists)
     setProfile(data.user)
   }
 
@@ -69,7 +69,7 @@ function Profile() {
 
         <Container sx={{ py: 3 }} maxWidth="md">
           {/* End hero unit */}
-          {listProduct && listProduct.map((product) => (
+          {listsProduct && listsProduct.map((product) => (
             <Grid key={product._id} container spacing={4} >
               <Grid item xs={12} sm={6} md={4} >
                 <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }} >

@@ -6,7 +6,7 @@ import { tokenExist } from '../utils/tokenHandler'
 
 import MyAppBar from '../components/AppBar';
 import SideBar from '../components/SideBar';
-import ListProducts from '../components/ListProducts';
+import ListsProducts from '../components/ListsProducts';
 
 import {
   Stack, Grid
@@ -16,7 +16,7 @@ import {
 function Store() {
 
   const [myUser, setMyUser] = useState({ name: '' })
-  const [listItem, setListItem] = useState([])
+  const [listsItem, setListsItem] = useState([])
   const [isLoading, setIsLoading] = useState(true)
   const endpoint = "http://192.168.1.125:8080/"
 
@@ -26,18 +26,18 @@ function Store() {
     setMyUser(data.user)
   }
 
-  const getList = async () => {
+  const getLists = async () => {
     const { data } = await getAxios(endpoint)
-    setListItem(data.product)
+    setListsItem(data.product)
     setIsLoading(false)
   }
 
   useEffect(() => {
     getMyUser()
-    getList()
+    getLists()
   }, [])
 
-  if (isLoading) return (<div>Loading</div>)
+  if (isLoading) return
   else return (
     <Stack spacing={6}>
       <MyAppBar avatar={myUser.avatar} name={myUser.name} />
@@ -46,7 +46,7 @@ function Store() {
           <SideBar />
         </Grid>
         <Grid item xl={9} lg={9} md={8} xs={12} >
-          <ListProducts listItem={listItem} />
+          <ListsProducts listsItem={listsItem} />
         </Grid>
       </Grid>
     </Stack>

@@ -11,130 +11,162 @@ export const conditions = ['New', 'Used : Like new', 'Used : Good', 'Used : Fair
 export const categories = [
     {
         icon: <HomeIcon />,
-        value: 'Home & Garden'
+        value: 'Home_Garden',
+        name: 'Home & Garden'
     },
     {
         icon: '',
-        value: 'Tools'
+        value: 'Tools',
+        name: 'Tools'
     },
     {
         icon: '',
-        value: 'Furniture'
+        value: 'Furniture',
+        name: 'Furniture'
     },
     {
         icon: '',
-        value: 'Household'
+        value: 'Household',
+        name: 'Household'
     },
     {
         icon: '',
-        value: 'Garden'
+        value: 'Garden',
+        name: 'Garden'
     },
     {
         icon: '',
-        value: 'Appliances'
+        value: 'Appliances',
+        name: 'Appliances'
     },
     {
         icon: <SportsEsportsIcon />,
-        value: 'Entertainment'
+        value: 'Entertainment',
+        name: 'Entertainment'
     },
     {
         icon: '',
-        value: 'Video Games'
+        value: 'Video_Games',
+        name: 'Video Games'
     },
     {
         icon: '',
-        value: 'Movies & Music'
+        value: 'Movies_Music',
+        name: 'Movies & Music'
     },
     {
         icon: <CheckroomIcon />,
-        value: 'Clothing & Accessories'
+        value: 'Clothing_Accessories',
+        name: 'Clothing & Accessories'
     },
     {
         icon: '',
-        value: 'Bags & Luggage'
+        value: 'Bags_Luggage',
+        name: 'Bags & Luggage'
     },
     {
         icon: '',
-        value: "Women's clothing & shoes"
+        value: "Womens_clothing_shoes",
+        name: "Women's clothing & shoes"
     },
     {
         icon: '',
-        value: "Men's clothing & shoes"
+        value: "Mens_clothing_shoes",
+        name: "Men's clothing & shoes"
     },
     {
         icon: '',
-        value: 'Jewelry & Accessories'
+        value: 'Jewelry_Accessories',
+        name: 'Jewelry & Accessories'
     },
     {
         icon: <FamilyRestroomIcon />,
-        value: 'Family'
+        value: 'Family',
+        name: 'Family'
     },
     {
         icon: '',
-        value: 'Health & beauty'
+        value: 'Health_beauty',
+        name: 'Health & beauty'
     },
     {
         icon: '',
-        value: 'Pet Supplies'
+        value: 'Pet_Supplies',
+        name: 'Pet Supplies'
     },
     {
         icon: '',
-        value: 'Baby & kids'
+        value: 'Baby_kids',
+        name: 'Baby & kids'
     },
     {
         icon: '',
-        value: 'Toys & Games'
+        value: 'Toys_Games',
+        name: 'Toys & Games'
     },
     {
         icon: <CableIcon />,
-        value: 'Electronics'
+        value: 'Electronics',
+        name: 'Electronics'
     },
     {
         icon: '',
-        value: 'Electronics & computers'
+        value: 'Electronics_computers',
+        name: 'Electronics & computers'
     },
     {
         icon: '',
-        value: 'Mobile phones'
+        value: 'Mobile_phones',
+        name: 'Mobile phones'
     },    
     {
         icon: <DownhillSkiingIcon />,
-        value: 'Hobbies'
+        value: 'Hobbies',
+        name: 'Hobbies'
     },
     {
         icon: '',
-        value: 'Bicycles'
+        value: 'Bicycles',
+        name: 'Bicycles'
     },
     {
         icon: '',
-        value: 'Arts & Crafts'
+        value: 'Arts_Crafts',
+        name: 'Arts & Crafts'
     },
     {
         icon: '',
-        value: 'Sports & Outdoors'
+        value: 'Sports_Outdoors',
+        name: 'Sports & Outdoors'
     },
     {
         icon: '',
-        value: 'Auto parts'
+        value: 'Auto_parts',
+        name: 'Auto parts'
     },
     {
         icon: '',
-        value: 'Musical Instruments'
+        value: 'Musical_Instruments',
+        name: 'Musical Instruments'
     },
     {
         icon: '',
-        value: 'Antiques & Collectibles'
+        value: 'Antiques_Collectibles',
+        name: 'Antiques & Collectibles'
     },
     {
         icon: <MoreHorizIcon />,
-        value: 'Classifieds'
+        value: 'Classifieds',
+        name: 'Classifieds'
     },
     {
         icon: '',
-        value: 'Garage Sale'
+        value: 'Garage_Sale',
+        name: 'Garage Sale'
     },
     {
         icon: '',
-        value: 'Miscellaneous'
+        value: 'Miscellaneous',
+        name: 'Miscellaneous'
     },
 ];
