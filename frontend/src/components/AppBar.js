@@ -13,21 +13,37 @@ import { nav } from './theme/AppBarTheme'
 import { useNavigate } from "react-router-dom";
 import { ThemeProvider } from '@mui/material/styles';
 
+import { useState, useEffect } from 'react'
+import { getAxios } from '../utils/axios'
+import { tokenExist } from '../utils/tokenHandler'
 
 const ResponsiveAppBar = (props) => {
-  const [anchorElUser, setAnchorElUser] = React.useState(null);
+
+  const navigate = useNavigate()
+  const [inputs, setInputs] = useState([])
+  const [anchorElUser, setAnchorElUser] = useState(null);
+  const Endpoint = "http://192.168.1.125:8080/notify"
+
+
+  const getNotify = async () => {
+    if (tokenExist()) {
+      const { data } = await getAxios(Endpoint)
+      setInputs(data.inbox) 
+    }
+  }
+  console.log(inputs);
+
+  useEffect(() => {
+    getNotify()
+  }, [])
+
 
   const handleOpenUserMenu = (event) => {
     setAnchorElUser(event.currentTarget);
   };
-
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
-
   };
-
-  const navigate = useNavigate()
-
   const logout = () => {
     localStorage.removeItem('token')
     navigate('/')
@@ -112,7 +128,7 @@ const ResponsiveAppBar = (props) => {
               </Menu>
             </Box>}
 
-            {props.name === '' ? null : <Box sx={{ flexGrow: 0.01 }}>
+            {!props.name ? null : <Box sx={{ flexGrow: 0.01 }}>
               <Tooltip title="Notifications">
                 <IconButton sx={{ p: 0 }}>
                   <Avatar sx={{
@@ -120,6 +136,7 @@ const ResponsiveAppBar = (props) => {
                     width: 40, height: 40
                   }}>
                     <NotificationsIcon />
+                    {inputs.length}
                   </Avatar>
                 </IconButton>
               </Tooltip>

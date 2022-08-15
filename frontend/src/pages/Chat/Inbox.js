@@ -1,76 +1,64 @@
-import React, { useEffect, useState } from 'react'
-import { useNavigate, } from "react-router-dom";
-import { Box, Grid, Stack, Link } from '@mui/material';
+import { Box, Link, Avatar } from '@mui/material';
+import React from 'react'
 
-import { getAxios } from '../../utils/axios'
-import { tokenExist } from '../../utils/tokenHandler'
-
-import AppBar from '../../components/AppBar'
 import './Chat.css'
 
-function Inbox() {
+function Inbox({ list, myUser, id }) {
 
-    const navigate = useNavigate()
-    const [myUser, setMyUser] = useState({})
-    const [chatLists, setChatLists] = useState([])
-    const [isLoading, setIsLoading] = useState(true)
-
-    const myEndpoint = "http://192.168.1.125:8080/setting"
-    const ListsEndpoint = "http://192.168.1.125:8080/chat"
-
-    const getMyUser = async () => {
-        if (!tokenExist()) return navigate('/')
-        const { data } = await getAxios(myEndpoint)
-        setMyUser(data.user)
-    }
-
-    const getLists = async () => {
-        const { data } = await getAxios(ListsEndpoint) 
-        setChatLists(data.chatLists)
-        setIsLoading(false)
-    }
- 
-    useEffect(() => {
-        getMyUser()
-        getLists()
-
-    }, []) // eslint-disable-line react-hooks/exhaustive-deps  
-
-
-    if (isLoading) return (<div>Loading</div>)
-    else
-        return (
-            <>
-                <AppBar avatar={myUser.avatar} name={myUser.name} />
-                <Box className='container'>
-                    <Grid container spacing={2}>
-                        {/* User */}
-                        <Grid item md={3}>
-                            <Stack spacing={2}>
-                                <Box className='sender'>User 1</Box>
-                                {chatLists && chatLists.map((user, idx) => (
-                                    <Link href={'/chat/' + user.user} key={idx} underline='none'>
-                                        <Box className='sender'>{user.room}</Box>
-                                    </Link>
-                                ))}
-                            </Stack>
-                        </Grid>
-
-                        {/* Chat */}
-                        <Grid item md={9}>
-                            <Box className='chatting'>
-                            </Box>
-
-                            {/* form */}
-                            <Box className='inputForm'>
-
-                            </Box>
-
-                        </Grid>
-                    </Grid>
-                </Box >
-            </>
-        )
+    // const timeString = (t) => {
+    //     let newFormat = new Date(t)
+    //     // Date.now()
+    //     // newFormat.getTime()
+    //     return newFormat.toLocaleTimeString()
+    // }
+    return (
+        <div>
+            {list && list.map((user, idx) => (
+                <Link href={'/chat/' + user.user} key={idx} underline='none'
+                    color={user.sentBy === myUser.name ? 'gray' : (user.user === id && 'gray') || 'lime'}>
+                    <Box className='inbox'>
+                        <Avatar alt={user.name} src={user.avatar}
+                            sx={{
+                                bgcolor: '#3A3B3C',
+                                width: 60, height: 60
+                            }} />
+                        {user.name}
+                        <p>
+                            {user.sentBy === myUser.name ? 'you : ' : null} {user.sent}
+                        </p>
+                        <p>
+                            {/* {timeString(user.updatedAt)} */}
+                        </p>
+                    </Box>
+                </Link>
+            ))}
+        </div>
+    )
 }
+
+// {list && list.map((user, idx) => (
+//     <Link href={'/chat/' + user.user} key={idx} underline='none'
+//         color={(last.user || user.sentBy) === myUser.name && (last.chatRoom === user.chat_room) ? 'gray' : 'inherit'}>
+//         <Box className='inbox'>
+//             <Avatar alt={user.name} src={user.avatar}
+//                 sx={{
+//                     bgcolor: '#3A3B3C',
+//                     width: 60, height: 60
+//                 }} />
+//             {user.name}
+//             <p>
+//                 {!!last && (last.chatRoom === user.chat_room)
+//                     ?
+//                     (last.user === myUser.name ? `you : ${last.message}` : last.message)
+//                     :
+//                     (user.sentBy === myUser.name ? `you : ${user.sent}` : user.sent)
+//                 }
+//             </p>
+//             <p>
+//                 {/* {timeString(user.updatedAt)} */}
+//             </p>
+//         </Box>
+//     </Link>
+// ))}
 
 export default Inbox

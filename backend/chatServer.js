@@ -9,18 +9,14 @@ const io = require("socket.io")(server, {
 });
 
 function useSocket() {
-
     io.on('connection', (socket) => {
-        console.log('user connect');
-        socket.on('join', room => {
-            console.log('user join: ' + room);
-            thisRoom = room
-            socket.join(room);
+
+        socket.on('join', (chatRoom) => {
+            socket.join(chatRoom);
         });
 
-        socket.on('sendMessage', ({ user, message }, callback) => {
-            thisUser = user
-            io.to(thisRoom).emit('message', { user: user, message: message });
+        socket.on('sendMessage', ({ room, user, message }, callback) => {
+            io.to(room).emit('messages', { user: user, message: message, room: room });
             callback();
         });
 

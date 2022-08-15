@@ -98,6 +98,10 @@ export default function Product() {
                   <Typography>
                     Date :{product.date}
                   </Typography>
+                  <Typography>
+                    update :{product.updatedAt}
+                  </Typography>
+
                   <Button href={"/chat/" + user._id} variant="contained">
                     Send Message
                   </Button>

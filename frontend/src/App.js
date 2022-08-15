@@ -9,7 +9,7 @@ import Register from './pages/Authentication/Register'
 
 import Test from './Test'
 import Chat from './pages/Chat/Chat'
-import Inbox from './pages/Chat/Inbox'
+import Side from './pages/Chat/Side'
 import Home from './pages/Home'
 import Page404 from './pages/Page404'
 import Profile from './pages/Profile'
@@ -25,7 +25,7 @@ function App() {
   return (
     <Routes>
       <Route path="/test" element={<Test />} />
-      <Route path="/chat" element={<Inbox />} />
+      <Route path="/chat" element={<Side />} />
       <Route path="/chat/:id" element={<Chat />} />
       <Route path="/" element={<Home />} />
       <Route path="login" element={<Login />} />

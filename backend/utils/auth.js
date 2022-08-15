@@ -25,7 +25,7 @@ module.exports.authByToken = async (req, res, next) => {
         if (!user)
             throw 'No user found in token'
         req.user = user
-        console.log({ 'auth.js': user });
+        console.log('----', { 'auth.js': user.email }, '----');
         return next()
     } catch (e) {
         return res.status(401).json({

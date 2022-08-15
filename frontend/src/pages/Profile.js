@@ -21,7 +21,7 @@ function Profile() {
 
   const { slug } = useParams()
   const navigate = useNavigate()
-  const [myUser, setMyUser] = useState({name:''})
+  const [myUser, setMyUser] = useState({ name: '' })
   const [profile, setProfile] = useState([])
   const [isLoading, setIsLoading] = useState(false)
   const [listsProduct, setListsProduct] = useState([])

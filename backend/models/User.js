@@ -23,12 +23,8 @@ const userSchema = new Schema({
         ref: "product"
     }],
     chat_lists: [{
-        user: String,
-        room: String,
-        start: {
-            type: Boolean,
-            default: false
-        }
+        type: Schema.Types.ObjectId,
+        ref: "inbox"
     }]
 })
 

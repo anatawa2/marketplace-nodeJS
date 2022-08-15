@@ -5,7 +5,7 @@ module.exports.getSingleCategory = async (req, res) => {
     try {
         const category = await Category.findOne({ name: req.params.slug })
         if (!category) throw 'not-found'
-        const ids = category.categorized.toString().split(',')
+        const ids = category.categorized
         const lists = []
 
         if (ids != '') {

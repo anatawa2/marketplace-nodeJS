@@ -9,16 +9,19 @@ mongoose.connect(dbUrl, {
 
 const Schema = mongoose.Schema
 
-const chatSchema = new Schema({
+const inboxSchema = new Schema({
+    user: String,
+    name: String,
     chat_room: String,
-    messages: [{
-        user: String,
-        message: String
-    }]
-})
+    avatar: String,
+    sentBy: String,
+    sent: String,
+    owner: String,
+    seen: { type: Boolean, default: false }
+}, { timestamps: true })
 
 // Create Model
-const Chat = mongoose.model("chat", chatSchema)
+const Chat = mongoose.model("inbox", inboxSchema)
 
 // Exports Model
 module.exports = Chat

@@ -75,6 +75,20 @@ module.exports.setting = async (req, res) => {
     }
 }
 
+module.exports.chatDisplay = async (req, res) => {
+    try {
+        const user = await User.findOne({ _id: req.params.id })
+            .select('name').select('avatar')
+
+        if (!user) throw 'No such user found'
+        // user.token = req.header('Authorization').split(' ')[1]
+        return res.status(200).json({ status: 'ok', user: user })
+
+    } catch (err) {
+        return res.status(400).json({ err: err })
+    }
+}
+
 module.exports.updateSetting = async (req, res) => {
 
     try {

@@ -1,9 +1,8 @@
 import React from 'react'
 
-function Messages({ messages, room }) {
+function Messages({ messages }) {
     return (
         <div>
-            ROOM : {room}
             {messages && messages.map((message, i) =>
                 <div key={i}>
                     {message.user}: {message.message}
