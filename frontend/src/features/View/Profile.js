@@ -6,33 +6,25 @@ import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import Card from '@mui/material/Card';
 import Link from '@mui/material/Link';
-import AppBar from '../components/AppBar'
+import AppBar from '../../components/AppBar'
 import Container from '@mui/material/Container';
 import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
 import CardContent from '@mui/material/CardContent';
 import CssBaseline from '@mui/material/CssBaseline';
 
-import { getAxios } from '../utils/axios'
+import { getAxios } from '../../utils/axios'
 import { useParams } from 'react-router-dom';
-import { tokenExist } from '../utils/tokenHandler'
+import { tokenExist } from '../../utils/tokenHandler'
 
 function Profile() {
 
   const { slug } = useParams()
-  const navigate = useNavigate()
-  const [myUser, setMyUser] = useState({ name: '' })
+  const navigate = useNavigate() 
   const [profile, setProfile] = useState([])
   const [isLoading, setIsLoading] = useState(false)
-  const [listsProduct, setListsProduct] = useState([])
-  const myEndpoint = "http://192.168.1.125:8080/setting/"
-  const endpoint = "http://192.168.1.125:8080/profile/" + slug
-
-  const getMyUser = async () => {
-    if (!tokenExist()) return;
-    const { data } = await getAxios(myEndpoint)
-    setMyUser(data.user)
-  }
+  const [listsProduct, setListsProduct] = useState([]) 
+  const endpoint = "http://192.168.1.125:8080/profile/" + slug 
 
   const getProfile = async () => {
     const { data } = await getAxios(endpoint)
@@ -42,8 +34,7 @@ function Profile() {
   }
 
   useEffect(() => {
-    setIsLoading(true)
-    getMyUser()
+    setIsLoading(true) 
     getProfile()
     setIsLoading(false)
   }, []) // eslint-disable-line react-hooks/exhaustive-deps   
@@ -51,7 +42,7 @@ function Profile() {
   if (isLoading) return (<div>Loading</div>)
   else return (
     <div>
-      <AppBar avatar={myUser.avatar} name={myUser.name} />
+      <AppBar />
       <CssBaseline />
       <main>
         {/* Hero unit */}

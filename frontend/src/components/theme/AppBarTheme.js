@@ -23,7 +23,7 @@ export const darkTheme = createTheme({
       secondary: '#d1d1d1', //grey
     },
   },
-  
+
   components: {
     // Name of the component    
     MuiInputBase: { //InputProps

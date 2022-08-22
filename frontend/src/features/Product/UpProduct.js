@@ -10,8 +10,7 @@ import { getAxios, patchAxios } from '../../utils/axios'
 import { FormProduct } from '../../components/FormProduct'
 
 function UpProduct() {
-
-    const [myUser, setMyUser] = useState('')
+ 
     const [inputs, setInputs] = useState({})
     const [fileLists, setFileLists] = useState({})
     const [isLoading, setIsLoading] = useState(true)
@@ -27,8 +26,7 @@ function UpProduct() {
     const getProduct = async () => {
         if (!tokenExist()) return navigate('/login')
 
-        const { data: { user } } = await getAxios(userEndpoint)
-        setMyUser(user)
+        const { data: { user } } = await getAxios(userEndpoint) 
 
         const { data: { product } } = await getAxios(getEndpoint)
         if (!product) return navigate('/404')
@@ -43,6 +41,7 @@ function UpProduct() {
         })
         setIsLoading(false)
     }
+    console.log(slug);
 
     useEffect(() => {
         getProduct()
@@ -104,7 +103,7 @@ function UpProduct() {
     else
         return (
             <div>
-                <AppBar avatar={myUser.avatar} name={myUser.name} />
+                <AppBar />
                 <FormProduct
                     inputs={inputs}
                     handleSubmit={handleSubmit}

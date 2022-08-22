@@ -17,26 +17,37 @@ import { useState, useEffect } from 'react'
 import { getAxios } from '../utils/axios'
 import { tokenExist } from '../utils/tokenHandler'
 
-const ResponsiveAppBar = (props) => {
+const ResponsiveAppBar = () => {
 
   const navigate = useNavigate()
-  const [inputs, setInputs] = useState([])
+  const [notif, setNotif] = useState([])
+  const [inbox, setInbox] = useState([])
+  const [myUser, setMyUser] = useState({ name: '' })
   const [anchorElUser, setAnchorElUser] = useState(null);
-  const Endpoint = "http://192.168.1.125:8080/notify"
+  const myEndpoint = "http://192.168.1.125:8080/setting"
 
+  const Endpoint = "http://192.168.1.125:8080/notify"
+  const inboxEndpoint = "http://192.168.1.125:8080/chat/"
+
+  const getMyUser = async () => {
+    if (!tokenExist()) return;
+    const { data } = await getAxios(myEndpoint)
+    setMyUser(data.user)
+  }
 
   const getNotify = async () => {
     if (tokenExist()) {
       const { data } = await getAxios(Endpoint)
-      setInputs(data.inbox) 
+      setNotif(data.inbox)
+      const { data: { inbox } } = await getAxios(inboxEndpoint)
+      setInbox(inbox[0])
     }
   }
-  console.log(inputs);
 
   useEffect(() => {
+    getMyUser()
     getNotify()
   }, [])
-
 
   const handleOpenUserMenu = (event) => {
     setAnchorElUser(event.currentTarget);
@@ -55,29 +66,31 @@ const ResponsiveAppBar = (props) => {
       <Box>
         <AppBar
           sx={{
+            position: 'fixed',
             borderBottom: 1,
             boxShadow: 'none',
             borderColor: "#393A3B",
           }}>
-          <Toolbar sx={{ my: -0.55, mx: -1 }} >
-            <Box sx={{ flexGrow: 0.01 }}>
-              <Link href='/'>
+
+          <Toolbar sx={{ my: -0.20 }} >
+            <Box sx={{ ml: -1, mr: 1 }}>
+              <Link href='/marketplace'>
                 <Avatar
                   alt="logo" src="/images/logo.jpg"
                   sx={{
                     bgcolor: '#3A3B3C',
-                    width: 40, height: 40
+                    width: 45, height: 45
                   }} />
               </Link>
             </Box>
 
             {/* search */}
-            <Box sx={{ flexGrow: 0.04 }}>
+            <Box  >
               <Tooltip title="Search">
                 <Link href='/search'>
                   <Avatar sx={{
                     bgcolor: '#3A3B3C',
-                    width: 40, height: 40
+                    width: 45, height: 45
                   }}>
                     <SearchIcon sx={{ color: '#B0B3B8' }} />
                   </Avatar>
@@ -88,68 +101,72 @@ const ResponsiveAppBar = (props) => {
             <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'flex' } }} />
 
             {/* Menu */}
-            {props.name === '' ? null : <Box sx={{ flexGrow: 0.01 }}>
-              <Tooltip title="Menu">
-                <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                  <Avatar sx={{
-                    bgcolor: '#3A3B3C',
-                    width: 40, height: 40
-                  }}>
-                    <AppsIcon />
-                  </Avatar>
-                </IconButton>
-              </Tooltip>
-              <Menu
-                sx={{ mt: '45px' }}
-                id="menu-appbar"
-                anchorEl={anchorElUser}
-                anchorOrigin={{
-                  vertical: 'top',
-                  horizontal: 'right',
-                }}
-                keepMounted
-                transformOrigin={{
-                  vertical: 'top',
-                  horizontal: 'right',
-                }}
-                open={Boolean(anchorElUser)}
-                onClose={handleCloseUserMenu}
-              >
-                <Link href="/setting" underline="none" color="inherit">
-                  <MenuItem>My Account</MenuItem>
-                </Link>
-                <Link href="/store" underline="none" color="inherit">
-                  <MenuItem>My Store</MenuItem>
-                </Link>
-                <Link href="/chat" underline="none" color="inherit">
-                  <MenuItem>Inbox</MenuItem>
-                </Link>
-                <MenuItem onClick={logout}>Logout</MenuItem>
-              </Menu>
-            </Box>}
+            {myUser.name === '' ? null :
+              <Box sx={{ mx: -0.5 }}>
+                <Tooltip title="Menu">
+                  <IconButton onClick={handleOpenUserMenu}>
+                    <Avatar sx={{
+                      bgcolor: '#3A3B3C',
+                      width: 45, height: 45
+                    }}>
+                      <AppsIcon />
+                    </Avatar>
+                  </IconButton>
+                </Tooltip>
+                <Menu
+                  sx={{ mt: '45px' }}
+                  id="menu-appbar"
+                  anchorEl={anchorElUser}
+                  anchorOrigin={{
+                    vertical: 'top',
+                    horizontal: 'right',
+                  }}
+                  keepMounted
+                  transformOrigin={{
+                    vertical: 'top',
+                    horizontal: 'right',
+                  }}
+                  open={Boolean(anchorElUser)}
+                  onClose={handleCloseUserMenu}
+                >
+                  <Link href="/setting" underline="none" color="inherit">
+                    <MenuItem>My Account</MenuItem>
+                  </Link>
+                  <Link href={'/profile/' + myUser._id} underline="none" color="inherit">
+                    <MenuItem>My Store</MenuItem>
+                  </Link>
+                  <Link href={inbox && "/chat/" + inbox.user} underline="none" color="inherit">
+                    <MenuItem>Inbox</MenuItem>
+                  </Link>
+                  <MenuItem onClick={logout}>Logout</MenuItem>
+                </Menu>
+              </Box>}
 
-            {!props.name ? null : <Box sx={{ flexGrow: 0.01 }}>
-              <Tooltip title="Notifications">
-                <IconButton sx={{ p: 0 }}>
-                  <Avatar sx={{
-                    bgcolor: '#3A3B3C',
-                    width: 40, height: 40
-                  }}>
-                    <NotificationsIcon />
-                    {inputs.length}
-                  </Avatar>
-                </IconButton>
-              </Tooltip>
-            </Box>}
+            {!myUser.name ? null :
+              <Link href="/Notifications" underline="none" color="inherit">
+                <Box sx={{ mx: -0.5 }}  >
+                  <Tooltip title="Notifications">
+                    <IconButton >
+                      <Avatar sx={{
+                        bgcolor: '#3A3B3C',
+                        width: 45, height: 45
+                      }}>
+                        <NotificationsIcon />
+                        {notif.length}
+                      </Avatar>
+                    </IconButton>
+                  </Tooltip>
+                </Box>
+              </Link>}
 
             <Link href="/setting" underline="none" color="inherit">
-              <Box sx={{ flexGrow: 0.01 }}>
+              <Box sx={{ mr: -1 }}>
                 <Tooltip title="Your Profile">
-                  <IconButton sx={{ p: 0 }}>
-                    <Avatar alt={props.name} src={props.avatar}
+                  <IconButton >
+                    <Avatar alt={myUser.name} src={myUser.avatar}
                       sx={{
                         bgcolor: '#3A3B3C',
-                        width: 40, height: 40
+                        width: 45, height: 45
                       }} />
                   </IconButton>
                 </Tooltip>
@@ -158,8 +175,8 @@ const ResponsiveAppBar = (props) => {
 
           </Toolbar>
         </AppBar >
-      </Box>
-    </ThemeProvider>
+      </Box >
+    </ThemeProvider >
   );
 };
 export default ResponsiveAppBar;

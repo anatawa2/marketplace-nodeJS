@@ -23,6 +23,7 @@ module.exports.onChatRoom = async (req, res) => {
             }
         }
 
+        let startConversataion = 0
         let chatHistory = []
         if (!!currentRoom) {
             chatHistory = await Chat.findOne({ chat_room: currentRoom })
@@ -47,6 +48,7 @@ module.exports.onChatRoom = async (req, res) => {
             recipient.chat_lists.push(newInboxRecipient)
             user.save()
             recipient.save()
+            startConversataion = 1
         }
 
         return res.json({
@@ -54,7 +56,8 @@ module.exports.onChatRoom = async (req, res) => {
             me: user._id.toString(),
             inbox: inbox,
             chatRoom: currentRoom,
-            chatHistory: chatHistory?.messages
+            chatHistory: chatHistory?.messages,
+            start: startConversataion
         })
 
     } catch (err) {
@@ -93,8 +96,8 @@ module.exports.sendMessages = async (req, res) => {
         recipient.sentBy = messages.user
         recipient.sent = messages.message
 
-        // sender.save()
-        // recipient.save()
+        sender.save()
+        recipient.save()
 
         // History
         let saveHistory = await Chat.findOne({ chat_room: chatRoom })
@@ -102,7 +105,7 @@ module.exports.sendMessages = async (req, res) => {
             saveHistory = new Chat({ chat_room: chatRoom })
         }
         saveHistory.messages.push(messages)
-        // saveHistory.save()
+        saveHistory.save()
 
         return res.json({ status: "ok" })
 
@@ -132,7 +135,6 @@ module.exports.myInbox = async (req, res) => {
 
 
 }
-
 module.exports.chatNotify = async (req, res) => {
 
     try {
@@ -157,7 +159,6 @@ module.exports.clickToSeen = async (req, res) => {
     try {
         const user = await User.findOne({ email: req.user.email })
         const chat = await Inbox.findOne({ owner: user._id, chat_room: req.body.room })
-        console.log(chat);
         chat.seen = true
         chat.save()
         return res.json({ status: "ok" })
@@ -166,16 +167,3 @@ module.exports.clickToSeen = async (req, res) => {
         res.status(422).json({ err: err })
     }
 }
-
-// module.exports.chatapp = () => {
-//     io.on('connection', (socket) => {
-
-//         socket.on('chat message', (msg) => {
-
-//             io.emit('chat message', msg);
-
-//         });
-
-//     });
-// }
-

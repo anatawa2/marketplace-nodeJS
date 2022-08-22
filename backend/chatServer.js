@@ -10,8 +10,9 @@ const io = require("socket.io")(server, {
 
 function useSocket() {
     io.on('connection', (socket) => {
-
+        console.log('user connected');
         socket.on('join', (chatRoom) => {
+            console.log('user join ::', chatRoom);
             socket.join(chatRoom);
         });
 

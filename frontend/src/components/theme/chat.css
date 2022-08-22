@@ -1,0 +1,158 @@
+.container {
+    position: absolute;
+    height: 89%;
+    width: 100%;
+    padding: 0px 10px 0px 10px;
+    /* border: 1px solid white; */
+}
+
+.inboxContainer {
+    position: absolute;
+    bottom: 0px;
+    height: 100%;
+    width: 25%;
+    min-width: 240px;
+    /* border: 1px dashed red; */
+}
+
+.chatsLabel {
+    padding: 15px 10px;
+    font-size: 24px;
+    width: 100%;
+    font-weight: bold;
+    /* border: 1px dashed red; */
+}
+
+.inbox {
+    position: absolute;
+    overflow: auto;
+    bottom: 1;
+    height: auto;
+    width: 100%;
+    padding-right: 10px;
+    /* border: 1px dashed red; */
+}
+
+.user,
+.userPick {
+    display: flex;
+    padding: 10px 15px;
+    border-radius: 8px;
+    /* border: 1px dashed red; */
+}
+
+.user:hover {
+    background-color: #3A3B3C;
+}
+
+@media screen and (max-width: 860px) {
+
+    .name,
+    .chatsLabel {
+        display: none;
+    }
+
+    .userPick,
+    .user {
+        justify-content: center;
+        /* background-color: yellowgreen; */
+    }
+
+    .user,
+    .userPick {
+        width: 55%;
+    }
+}
+
+.name {
+    margin-top: -8px;
+    width: 100%;
+    padding: 12px;
+    padding-left: 15px;
+    font-size: 17px;
+    /* border: 1px dashed red; */
+}
+
+.rightContainer {
+    position: absolute;
+    border-left: solid 1px #2F3031;
+    width: 74%;
+    height: 99%;
+    /* border: 1px dashed red; */
+
+}
+
+.userBar {
+    display: flex;
+    padding: 7px 7px;
+    padding-right: 15px;
+    align-items: center;
+    font-size: 22px;
+    font-weight: bold;
+    box-shadow: 0px 1px #212223;
+    /* border: 1px dashed red; */
+}
+
+.chatting {
+    height: 80%;
+    width: 100%;
+    position: absolute;
+    overflow: auto;
+    /* border: 1px dashed teal; */
+
+}
+
+.sendContainer {
+    display: flex;
+    justify-content: flex-end;
+    padding: 5px 10px;
+}
+
+.receiveContainer {
+    display: flex;
+    justify-content: flex-start;
+    padding: 10px 10px;
+}
+
+.send {
+    font-size: 20px;
+    padding: 5px 20px;
+    border-radius: 20px;
+    background: #0084FF;
+}
+
+.receive {
+    font-size: 20px;
+    padding: 5px 20px;
+    border-radius: 20px;
+    background: #3E4042;
+}
+
+
+.inputForm {
+    display: flex;
+    position: absolute;
+    width: 97%;
+    margin-left: 20px;
+    bottom: 0;
+    /* border: 1px dotted green; */
+}
+
+::-webkit-scrollbar {
+    width: 15px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    background: #424242;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: #7B7B7B;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    background: #a1a0a0;
+}

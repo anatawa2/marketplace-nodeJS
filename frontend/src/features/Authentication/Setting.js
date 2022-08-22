@@ -72,7 +72,7 @@ function Profile() {
     else {
         return (
             <div>
-                <AppBar avatar={inputs.avatar} name={inputs.name} />
+                <AppBar/>
                 <Container component="main" maxWidth="xs">
                     <Box
                         sx={{

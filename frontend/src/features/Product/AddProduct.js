@@ -81,7 +81,7 @@ export default function AddProduct() {
     if (tokenExist()) {
         return (
             <>
-                <AppBar avatar={myUser.avatar} name={myUser.name} />
+                <AppBar />
                 <FormProduct
                     inputs={inputs}
                     handleSubmit={handleSubmit}

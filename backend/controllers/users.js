@@ -40,7 +40,7 @@ module.exports.register = async (req, res) => {
 module.exports.login = async (req, res) => {
 
     try {
-        if (!req.body.email) throw 'Username is Required'
+        if (!req.body.email) throw 'Email is Required'
         if (!req.body.password) throw 'Password is Required'
 
         // fetch DB 
@@ -49,7 +49,7 @@ module.exports.login = async (req, res) => {
 
         // check matching
         const matching = await matchPassword(req.body.password, user.password)
-        if (!matching) return res.status(401).json({ err: 'Invalid Password or Email' })
+        if (!matching) throw 'Invalid Password or Email'
 
         // gen token AND del password 
         user.token = await sign(user, req.body.expiresIn)

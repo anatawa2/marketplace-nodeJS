@@ -8,171 +8,139 @@ import ShoppingBagIcon from '@mui/icons-material/ShoppingBag';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 
 import {
-  Typography, List, ListItemText, ListItemIcon,
-  ListItemButton, TextField, InputAdornment, Button,
-  Avatar, Box, Stack,
+  TextField, InputAdornment, Button,
+  Avatar, Box, Link
 }
   from '@mui/material';
 
 import { categories } from '../utils/categories'
 
-function SideBar() {
+function SideBar({ pathname }) {
 
   return (
     <>
-      <Stack
-        sx={{
-          display: { xs: 'none', md: 'flex' },
-          position: 'relative',
-          borderRight: 1,
-          borderColor: "#393A3B",
-        }}>
-        <Box
-          sx={{
-            position: 'relative',
-            m: 1,
-            pt: 1,
-            borderBottom: 1,
-            borderColor: '#393A3B',
-            bgcolor: '#abc666',
-          }}
-        >
-          <Box sx={{ my: -1, ml: -1 }} >
-            <ListItemButton >
-              <ListItemText>
-                <Typography
-                  variant="h5" component="div"
-                  sx={{
-                    fontWeight: 'bold'
-                  }}>
-                  Marketplace
-                </Typography>
-              </ListItemText>
-              <ListItemIcon>
-                <Avatar
-                  sx={{
-                    color: '#fff',
-                    bgcolor: '#3A3B3C',
-                    height: 35,
-                    width: 35,
-                    ml: 10,
-                  }}>
-                  <SettingsIcon />
-                </Avatar>
-              </ListItemIcon>
-            </ListItemButton>
-          </Box>
+      {/* Marketplace Label */}
+      <Box className='sidebarLabel'>
 
-          <Box sx={{ my: 2, mx: 1 }}>
-            <TextField
+        <Box className='label'>
+          Marketplace
+          <Link href='/'>
+            <Avatar
               sx={{
-                borderRadius: 10,
+                mt: 0.5,
+                color: '#fff',
                 bgcolor: '#3A3B3C',
-                py: 0.6,
-                pl: 1.2,
-              }}
-              fullWidth
-              variant="standard"
-              placeholder='Search marketplace'
-              InputProps={{
-                disableUnderline: true,
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <SearchIcon sx={{
-                      color: '#B0B3B8',
-                    }} />
-                  </InputAdornment>
-                ),
-              }}
-            />
-          </Box>
+                height: 40, width: 40,
+              }}>
+              <SettingsIcon />
+            </Avatar>
+          </Link>
         </Box>
 
-
-
-        <List dense >
-
-          {menu.map((item, idx) => (
-            <ListItemButton href={item.link} key={idx}>
-              <ListItemIcon>
-                <Avatar sx={{ color: '#fff', bgcolor: '#3A3B3C', }}>
-                  {item.icon}
-                </Avatar>
-              </ListItemIcon>
-              <Typography sx={{ fontWeight: 'bold', color: '#D0D2D6' }}>
-                {item.value}
-              </Typography>
-            </ListItemButton>
-          ))}
-
-          {/* BUTTON ADD ITEM */}
-          <Box sx={{ m: 1, mx: 2 }}>
-            <Button
-              href="/product/add"
-              fullWidth
-              sx={{
-                borderRadius: 2,
-                color: '#2D88FF',
-                bgcolor: '#263951',
-                py: 1,
-              }}
-            >
-              + Create new listing
-            </Button>
-          </Box>
-
-          <Box
+        {/* search */}
+        <Box sx={{ mx: 2, mr: 3 }}>
+          <TextField
             sx={{
-              mx: 2,
-              borderTop: 1,
-              borderBottom: 1,
-              borderColor: "#393A3B",
-            }}>
-            <Typography sx={{ mt: 1, ml: 2, color: '#fff' }} variant="h6" component="div">
-              Filters
-            </Typography>
-            <Button fullWidth>
-              <Typography sx={{ ml: 1, }} variant="button">
-                Bangkok, Thailand
-              </Typography>
-            </Button>
+              borderRadius: 10,
+              bgcolor: '#3A3B3C',
+              py: 0.6,
+              pl: 1.2,
+            }}
+            fullWidth
+            variant="standard"
+            placeholder='Search marketplace'
+            InputProps={{
+              disableUnderline: true,
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon sx={{ color: '#B0B3B8' }} />
+                </InputAdornment>
+              )
+            }}
+          />
+        </Box>
+
+      </Box>
+
+      <Box className='space'></Box>
+
+      {/* Nav */}
+      <Box>
+        {menu.map((val, idx) => (
+          <Link href={val.link} key={idx} underline="none" color="inherit">
+            <Box className='listing'
+              sx={{ bgcolor: val.link === pathname ? '#3A3B3C' : '' }}>
+              <Avatar
+                sx={{
+                  color: '#fff',
+                  bgcolor: (val.link === pathname) ? '#1877F2' : '#4E4F50',
+                  height: 40, width: 40,
+                }}>
+                {val.icon}
+              </Avatar>
+              <Box className='font'>
+                {val.name}
+              </Box>
+            </Box>
+          </Link>
+        ))}
+
+        {/* Add Button */}
+        <Link href='/product/add' underline="none" >
+          <Box className='button'>
+            + Create new listing
+          </Box>
+        </Link>
+        <Box className='filter'>
+          <Box>
+            Filters
+          </Box>
+          <Button href='#' underline="none" >
+            Udon Thani . Within 10 kilometers
+          </Button>
+
+        </Box>
+
+        {/* categories*/}
+        <Box>
+        <Box className='font3'>
+            Categories
           </Box>
 
-          <Typography sx={{ my: 1, ml: 2, color: '#fff' }} variant="h6" component="div">
-            Categories
-          </Typography>
+          {categories?.map((val, idx) => (
+            <Link href={val.icon ? null : '/category/' + val.value}
+              key={idx} underline="none" color="inherit">
 
+              <Box className={val.icon ? 'icon' : 'listing'}
+                sx={{ bgcolor: val.value === pathname ? '#3A3B3C' : '' }}>
+                {!val.icon ? null : <Avatar
+                  sx={{
+                    color: '#fff',
+                    bgcolor: '#4E4F50',
+                    height: 40, width: 40,
+                  }}>
+                  {val.icon}
+                </Avatar>}
+                <Box className={val.icon ? 'font' : 'font2'}>
+                  {val.name}
+                </Box>
+              </Box>
 
-          {categories.map((cate, idx) => (
-            <ListItemButton href={cate.icon ? null : '/category/' + cate.value}
-              disableTouchRipple={cate.icon ? true : false}
-              key={idx} >
-              <ListItemIcon>
-                {cate.icon &&
-                  <Avatar sx={{ color: '#fff', bgcolor: '#3A3B3C', }}>
-                    {cate.icon}
-                    {/* <StorefrontIcon fontSize='small' /> */}
-                  </Avatar>
-                }
-              </ListItemIcon>
-              <Typography sx={{ my: 1, fontWeight: 'bold', color: '#D0D2D6' }}>
-                {cate.name}
-              </Typography>
-            </ListItemButton>
+            </Link>
           ))}
+        </Box>
 
-        </List>
-      </Stack>
+      </Box>
     </>
   );
 }
 
 const menu = [
-  { icon: <StorefrontIcon />, value: 'Browse all', link: '/' },
-  { icon: <NotificationsIcon />, value: 'Notifications', link: '' },
-  { icon: <DraftsIcon />, value: 'Inbox', link: '' },
-  { icon: <ShoppingBagIcon />, value: 'Buying', link: '' },
-  { icon: <LocalOfferIcon />, value: 'Selling', link: '' },
+  { icon: <StorefrontIcon />, name: 'Browse all', link: '/marketplace' },
+  { icon: <NotificationsIcon />, name: 'Notifications', link: '/Notifications' },
+  { icon: <DraftsIcon />, name: 'Inbox', link: '/inbox' },
+  { icon: <ShoppingBagIcon />, name: 'Buying', link: '' },
+  { icon: <LocalOfferIcon />, name: 'Selling', link: '' },
 ]
 
 export default SideBar
