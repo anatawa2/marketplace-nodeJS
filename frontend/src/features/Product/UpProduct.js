@@ -10,7 +10,7 @@ import { getAxios, patchAxios } from '../../utils/axios'
 import { FormProduct } from '../../components/FormProduct'
 
 function UpProduct() {
- 
+
     const [inputs, setInputs] = useState({})
     const [fileLists, setFileLists] = useState({})
     const [isLoading, setIsLoading] = useState(true)
@@ -26,14 +26,12 @@ function UpProduct() {
     const getProduct = async () => {
         if (!tokenExist()) return navigate('/login')
 
-        const { data: { user } } = await getAxios(userEndpoint) 
-
+        const { data: { user } } = await getAxios(userEndpoint)
         const { data: { product } } = await getAxios(getEndpoint)
-        if (!product) return navigate('/404')
-        setInputs(product)
-
         //verify
         if (user._id !== product.owner) return navigate('/')
+        if (!product) return navigate('/404')
+        setInputs(product)
 
         let myImg = product.images
         myImg.forEach((item) => {
@@ -41,7 +39,6 @@ function UpProduct() {
         })
         setIsLoading(false)
     }
-    console.log(slug);
 
     useEffect(() => {
         getProduct()
@@ -93,7 +90,10 @@ function UpProduct() {
         }
 
         const { data } = await patchAxios(patchEndpoint, formData)
-        if (data.err) return Swal.err(data.err)
+        if (data.err) {
+            alert(data.err)
+            return navigate(0)
+        }
         Swal.ok()
         navigate('/product/' + data.slug)
 
@@ -105,6 +105,7 @@ function UpProduct() {
             <div>
                 <AppBar />
                 <FormProduct
+                    type={'Update'}
                     inputs={inputs}
                     handleSubmit={handleSubmit}
                     handleChange={handleChange}

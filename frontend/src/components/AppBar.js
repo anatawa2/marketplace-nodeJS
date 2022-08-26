@@ -10,23 +10,24 @@ import AppsIcon from '@mui/icons-material/Apps';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 
 import { nav } from './theme/AppBarTheme'
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { ThemeProvider } from '@mui/material/styles';
 
 import { useState, useEffect } from 'react'
 import { getAxios } from '../utils/axios'
 import { tokenExist } from '../utils/tokenHandler'
 
-const ResponsiveAppBar = () => {
+const ResponsiveAppBar = ({ searchElement }) => {
 
   const navigate = useNavigate()
+  const { pathname } = useLocation()
   const [notif, setNotif] = useState([])
   const [inbox, setInbox] = useState([])
   const [myUser, setMyUser] = useState({ name: '' })
   const [anchorElUser, setAnchorElUser] = useState(null);
-  const myEndpoint = "http://192.168.1.125:8080/setting"
 
   const Endpoint = "http://192.168.1.125:8080/notify"
+  const myEndpoint = "http://192.168.1.125:8080/setting"
   const inboxEndpoint = "http://192.168.1.125:8080/chat/"
 
   const getMyUser = async () => {
@@ -48,6 +49,11 @@ const ResponsiveAppBar = () => {
     getMyUser()
     getNotify()
   }, [])
+
+  const search = () => {
+    if (pathname === '/marketplace') searchElement.current.focus()
+    else return navigate('/search')
+  }
 
   const handleOpenUserMenu = (event) => {
     setAnchorElUser(event.currentTarget);
@@ -85,17 +91,15 @@ const ResponsiveAppBar = () => {
             </Box>
 
             {/* search */}
-            <Box  >
-              <Tooltip title="Search">
-                <Link href='/search'>
-                  <Avatar sx={{
-                    bgcolor: '#3A3B3C',
-                    width: 45, height: 45
-                  }}>
-                    <SearchIcon sx={{ color: '#B0B3B8' }} />
-                  </Avatar>
-                </Link>
-              </Tooltip>
+            <Box>
+              <div style={{ cursor: "pointer" }} onClick={() => search()}>
+                <Avatar sx={{
+                  bgcolor: '#3A3B3C',
+                  width: 45, height: 45
+                }}>
+                  <SearchIcon sx={{ color: '#B0B3B8' }} />
+                </Avatar>
+              </div>
             </Box>
 
             <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'flex' } }} />
@@ -152,7 +156,7 @@ const ResponsiveAppBar = () => {
                         width: 45, height: 45
                       }}>
                         <NotificationsIcon />
-                        {notif.length}
+                        {notif.length > 0 && notif.length}
                       </Avatar>
                     </IconButton>
                   </Tooltip>

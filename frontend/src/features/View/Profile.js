@@ -14,17 +14,16 @@ import CardContent from '@mui/material/CardContent';
 import CssBaseline from '@mui/material/CssBaseline';
 
 import { getAxios } from '../../utils/axios'
-import { useParams } from 'react-router-dom';
-import { tokenExist } from '../../utils/tokenHandler'
+import { useParams } from 'react-router-dom'; 
 
 function Profile() {
 
   const { slug } = useParams()
-  const navigate = useNavigate() 
+  const navigate = useNavigate()
   const [profile, setProfile] = useState([])
   const [isLoading, setIsLoading] = useState(false)
-  const [listsProduct, setListsProduct] = useState([]) 
-  const endpoint = "http://192.168.1.125:8080/profile/" + slug 
+  const [listsProduct, setListsProduct] = useState([])
+  const endpoint = "http://192.168.1.125:8080/profile/" + slug
 
   const getProfile = async () => {
     const { data } = await getAxios(endpoint)
@@ -34,7 +33,7 @@ function Profile() {
   }
 
   useEffect(() => {
-    setIsLoading(true) 
+    setIsLoading(true)
     getProfile()
     setIsLoading(false)
   }, []) // eslint-disable-line react-hooks/exhaustive-deps   
@@ -91,10 +90,13 @@ function Profile() {
                     <Typography>
                       condition: {product.condition}
                     </Typography>
-                    <Link href={"/profile/" + product.owner} variant="body2">
-                    </Link>
                     <Typography>
                       Date: {product.date}
+                    </Typography>
+                    <Typography>
+                      <Link href={"/product/update/" + product.slug} variant="body2">
+                        update
+                      </Link>
                     </Typography>
                   </CardContent>
                 </Card>

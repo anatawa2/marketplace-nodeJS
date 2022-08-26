@@ -3,8 +3,7 @@ import {
 } from '@mui/material';
 
 import React from 'react'
-
-import '../../components/theme/chat.css'
+import styles from './css/chat.module.css'
 
 function user({ list, myUser, id }) {
 
@@ -28,7 +27,7 @@ function user({ list, myUser, id }) {
                     color={user.sentBy === myUser.name ? 'gray' :
                         (user.user === id && 'gray') || 'white'}>
 
-                    <Box className={(user.user === id && 'userPick') || 'user'}
+                    <Box className={(user.user === id && styles.userPick) || styles.user}
                         backgroundColor={user.user === id && '#252F3C'}  >
 
                         <Avatar alt={user.name} src={user.avatar}
@@ -36,7 +35,7 @@ function user({ list, myUser, id }) {
                                 bgcolor: '#3A3B3C',
                                 width: 60, height: 60,
                             }} />
-                        <Box className='name' >
+                        <Box className={styles.name} >
                             <Typography variant='h6'>
                                 {user.name}
                             </Typography>

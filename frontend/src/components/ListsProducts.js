@@ -4,6 +4,11 @@ import React from 'react'
 import { CardContent, Box, Card, Grid, Link, CardMedia, Typography, } from '@mui/material'
 
 function ListsProducts({ listsItem, category }) {
+
+    function numberWithCommas(x) {
+        return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
+
     return (
         <Box sx={{ bgcolor: '#18191A', p: 4 }}>
             <Typography variant='h6' sx={{ mb: 3 }}>
@@ -19,13 +24,13 @@ function ListsProducts({ listsItem, category }) {
                                 <CardMedia
                                     component="img"
                                     sx={{ borderRadius: '6px' }}
-                                    height="340" 
+                                    height="340"
                                     image={data.images && (data.images[0])}
                                     alt="img"
                                 />
                                 <CardContent sx={{ bgcolor: '#18191A' }}>
                                     <Typography variant="h6" >
-                                        ฿ {data.price}
+                                        ฿ {numberWithCommas(data.price)}
                                     </Typography >
                                     <Typography variant="body1">
                                         {data.name}

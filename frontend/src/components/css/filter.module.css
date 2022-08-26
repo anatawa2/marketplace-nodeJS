@@ -1,0 +1,47 @@
+.choice {
+    display: flex;
+    flex-direction: column;
+    margin-top: -10px;
+    margin-left: 15px;
+    /* border: 1px dashed red; */
+}
+
+.radio {
+    display: flex;
+    font: 17px solid;
+    margin-left: -5px;
+    width: 100%;
+    padding: 5px 15px;
+    justify-content: space-between;
+    align-items: center;
+    /* border: 1px dashed yellow; */
+}
+
+.radio:hover {
+    border-radius: 8px;
+    background-color: #3A3B3C;
+}
+
+.price {
+    padding: 10px 5px;
+    margin: 20px 10px;
+    border-top: 1px solid #3A3B3C;
+    border-bottom: 1px solid #3A3B3C;
+    /* border: 1px dashed yellow; */
+}
+
+.price>h3 {
+    margin-top: 0px;
+    margin-bottom: 5px;
+}
+
+.input {
+    display: flex;
+    align-items: center;
+    /* border: 1px dashed rgb(90, 142, 240); */
+
+}
+
+.input>p {
+    margin: 0px 15px;
+}

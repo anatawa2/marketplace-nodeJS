@@ -8,7 +8,7 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { categories, conditions } from '../utils/categories'
 
 export function FormProduct({ handleSubmit, handleChange,
-    selectedImages, removeImages, onSelectFile, inputs }) {
+    selectedImages, removeImages, onSelectFile, inputs, type }) {
     return (
         <div>
             <Container component="main" maxWidth="xs">
@@ -25,7 +25,7 @@ export function FormProduct({ handleSubmit, handleChange,
                         <LockOutlinedIcon />
                     </Avatar>
                     <Typography component="h1" variant="h5">
-                        Add Product
+                        {type}
                     </Typography>
                     <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
                         <Grid container spacing={2}>
@@ -153,7 +153,7 @@ export function FormProduct({ handleSubmit, handleChange,
                             variant="contained"
                             sx={{ mt: 3, mb: 2 }}
                         >
-                            Add
+                            {type}
                         </Button>
 
                     </Box>

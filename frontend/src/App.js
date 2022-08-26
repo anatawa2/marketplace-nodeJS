@@ -25,7 +25,7 @@ function App() {
   return (
     <Routes>
       <Route path="/" element={<Navigate to='/marketplace' replace />} />
-      {/* <Route path="*" element={<Navigate to='/marketplace' replace />} /> */}
+      <Route path="*" element={<Navigate to='/404' replace />} />
 
       <Route path="chat/:id" element={<Chat />} />
       <Route path="/marketplace" element={<Marketplace />} />
@@ -35,7 +35,9 @@ function App() {
 
       <Route path="category/:slug" element={<Category />} />
 
-      <Route path="search/:slug" element={<Search />} />
+      {/* <Route path="search/" element={<Marketplace  />} /> */}
+      <Route path="search/" element={<Marketplace auto={true} />} />
+      <Route path="query/" element={<Search />} />
       <Route path="product/:slug" element={<Product />} />
       <Route path="product/add" element={<AddProduct />} />
       <Route path="product/update/:slug" element={<UpProduct />} />

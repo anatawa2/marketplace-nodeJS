@@ -3,32 +3,23 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from "react-router-dom";
 
 import {
-  Box, Button
+  Avatar, Box, Link, TextField
 } from '@mui/material';
 
-import '../../components/theme/product.css'
+import styles from './css/product.module.css'
 
 import AppBar from '../../components/AppBar'
 import { useParams } from 'react-router-dom'
 import { getAxios } from '../../utils/axios'
-import { tokenExist } from '../../utils/tokenHandler'
 
 export default function Product() {
 
   const { slug } = useParams()
   const navigate = useNavigate()
   const [user, setUser] = useState([])
-  const [myUser, setMyUser] = useState({ name: '', avatar: '' })
   const [product, setProduct] = useState([])
   const [isLoading, setIsLoading] = useState(true)
-  const myEndpoint = "http://192.168.1.125:8080/setting/"
   const endpoint = "http://192.168.1.125:8080/product/" + slug
-
-  const getMyUser = async () => {
-    if (!tokenExist()) return;
-    const { data } = await getAxios(myEndpoint)
-    setMyUser(data.user)
-  }
 
   const getProduct = async () => {
     const { data } = await getAxios(endpoint)
@@ -39,7 +30,6 @@ export default function Product() {
   }
 
   useEffect(() => {
-    getMyUser()
     getProduct()
 
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
@@ -54,27 +44,73 @@ export default function Product() {
   else return (
     <>
 
-      <AppBar avatar={myUser.avatar} name={myUser.name} />
+      <AppBar />
 
       {/* IMAGE */}
-      <Box className='flexContainer'>
+      <Box className={styles.flexContainer}>
 
-        <Box className='item1'>
+        <Box className={styles.item1}>
 
-          <div class="bg-image"><img alt='pic' src={product.images} /></div>
-          
-          
+          <div className={styles.bg}><img alt='pic' src={product.images[0]} /></div>
+
+
 
         </Box>
 
         {/* DESCRIPTION */}
-        <Box className='item2'>
+        <Box className={styles.item2}>
+          <div className={styles.desc}>
+            <h2>{product.name}</h2>
+            <p>Detail</p>
+            <p>฿ {product.price}</p>
+            <p>Condition : {product.condition}</p>
+            <p>{product.desc}</p>
 
-          <div class="desc">             
+            {/* Profile */}
+            <div className={styles.xxx}>
+              <p>Seller Information</p>
+              <Link href={'/profile/' + user._id} underline="none" color="inherit" >
+                <div className={styles.profile}>
+                  <Avatar alt={user.name} src={user.avatar}
+                    sx={{
+                      bgcolor: '#3A3B3C',
+                      width: 60, height: 60,
+                    }} />
+
+                  <p>{user.name}</p>
+                </div>
+              </Link>
+              Joined Facebook in 2022
+            </div>
+
+          </div>
+
+          {/* Message */}
+          <div className={styles.messageTab}>
+            <Box sx={{ my: 0.7 }}>
+              <TextField
+                sx={{
+                  borderRadius: 3,
+                  bgcolor: '#3A3B3C',
+                  py: 0.7,
+                  pl: 2,
+                }}
+                fullWidth
+                variant="standard"
+                InputProps={{
+                  disableUnderline: true,
+                }}
+              />
+            </Box>
+            {/* Button */}
+            <Link href='#' underline="none" color="inherit" >
+              <div className={styles.buttonx}>
+                Send
+              </div>
+            </Link>
           </div>
 
         </Box>
-
       </Box>
 
     </>

@@ -10,7 +10,8 @@ import { useState, useEffect } from 'react'
 import { tokenExist } from '../../utils/tokenHandler'
 import { useNavigate } from 'react-router-dom';
 
-import '../../components/theme/notifyBox.css'
+import styles from '../../components/css/view.module.css';
+import notif from '../../components/css/notifyBox.module.css';
 
 import {
     Grid, Stack, Box, Typography
@@ -20,18 +21,19 @@ function Inbox() {
 
     // const navigate = useNavigate()
     const { pathname } = useLocation()
-    const [notif, setNotif] = useState([])
+    const navigate = useNavigate()
+    const [notify, setNotify] = useState([])
     const [myUser, setMyUser] = useState({ name: '' })
     const userEndpoint = "http://192.168.1.125:8080/setting"
     const Endpoint = "http://192.168.1.125:8080/notify"
 
     const getMyUser = async () => {
-        if (!tokenExist()) return;
+        if (!tokenExist()) return navigate('/login');
         const { data } = await getAxios(userEndpoint)
         setMyUser(data.user)
 
         const { data: { inbox } } = await getAxios(Endpoint)
-        setNotif(inbox)
+        setNotify(inbox)
     }
 
     useEffect(() => {
@@ -41,19 +43,19 @@ function Inbox() {
     return (
         <Stack spacing={7}> {/*appbar*/}
             <MyAppBar avatar={myUser.avatar} name={myUser.name} />
-            <Box className='container'>
+            <Box className={styles.container}>
 
                 <Grid container>
                     <Grid item md={4} lg={3} xl={3}>
-                        <Box className='sidebar'>
+                        <Box className={styles.sidebar}>
                             <SideBar pathname={pathname} />
                         </Box>
                     </Grid>
 
                     <Grid item md={8} lg={9} xl={9} >
-                        <Box className='itemContainer'>
+                        <Box className={styles.itemContainer}>
 
-                            <div className='main'>
+                            <div className={notif.main}>
                                 <Typography variant='h5' sx={{ my: 2, mb: 1 }} >
                                     Selling , Buying
                                 </Typography>
@@ -61,8 +63,8 @@ function Inbox() {
 
                             <div> &nbsp; </div>
 
-                            <div className='main'>
-                                <NotifyBox list={notif} />
+                            <div className={notif.main}>
+                                <NotifyBox list={notify} />
                             </div>
 
                         </Box>

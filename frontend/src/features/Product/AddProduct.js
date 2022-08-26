@@ -83,6 +83,7 @@ export default function AddProduct() {
             <>
                 <AppBar />
                 <FormProduct
+                    type={"Add Product"}
                     inputs={inputs}
                     handleSubmit={handleSubmit}
                     handleChange={handleChange}

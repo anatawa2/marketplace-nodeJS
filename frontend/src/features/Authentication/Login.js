@@ -4,8 +4,8 @@ import { Swal } from '../../utils/Swal'
 // MUI 
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import {
-    FormControlLabel, Typography, TextField, Box,
-    Button, Link, Avatar, Checkbox, Container, Grid
+    Typography, TextField, Box,
+    Button, Link, Avatar, Container, Grid
 } from '@mui/material';
 
 
@@ -84,10 +84,6 @@ function Login() {
                             value={inputs.password || ""}
                             onChange={handleChange}
                         />
-                        <FormControlLabel
-                            control={<Checkbox value="remember" color="primary" />}
-                            label="Remember me"
-                        />
                         <Button
                             type="submit"
                             variant="contained"
@@ -99,12 +95,11 @@ function Login() {
                         <Grid container>
                             <Grid item xs>
                                 <Link href="#" variant="body2">
-                                    Forgot password?
                                 </Link>
                             </Grid>
-                            <Grid item>
-                                <Link href="/register" variant="body2">
-                                    Don't have an account? Sign Up
+                            <Grid item>Don't have an account? &nbsp;
+                                <Link href="/register" variant="body1" underline="none">
+                                    Sign Up
                                 </Link>
                             </Grid>
                         </Grid>

@@ -13,7 +13,7 @@ import { tokenExist } from '../../utils/tokenHandler'
 import AppBar from '../../components/AppBar'
 import Messages from './Messages';
 import Inbox from './Inbox';
-import '../../components/theme/chat.css'
+import styles from './css/chat.module.css'
 
 let socket
 let corsOptions = {
@@ -134,12 +134,12 @@ function Chat() {
         return (
             <Stack spacing={7}>
                 <AppBar />
-                <Box className='container'>
+                <Box className={styles.container}>
                     <Grid container spacing={2}>
                         {/* User */}
                         <Grid item md={3} sm={3} xs={3}>
-                            <Box className='inboxContainer'>
-                                <Box className='chatsLabel'>
+                            <Box className={styles.inboxContainer}>
+                                <Box className={styles.chatsLabel}>
                                     Chats
                                     <Box sx={{ my: 1.5, mr: 1 }}>
                                         <TextField
@@ -164,7 +164,7 @@ function Chat() {
                                     </Box>
                                 </Box>
 
-                                <Box className='inbox'>
+                                <Box className={styles.inbox}>
                                     <Inbox list={inbox} myUser={myUser} id={id} />
                                 </Box>
                             </Box>
@@ -172,13 +172,13 @@ function Chat() {
 
                         {/* Chat */}
                         <Grid item md={9} sm={9} xs={9}>
-                            <Box className='rightContainer'>
-                                <Box className='userBar'>
+                            <Box className={styles.rightContainer}>
+                                <Box className={styles.userBar}>
                                     <Avatar alt={urUser.name} src={urUser.avatar}
                                         sx={{ width: 65, height: 65, mr: 2 }} />
                                     {urUser.name}
                                 </Box>
-                                <Box className='chatting'>
+                                <Box className={styles.chatting}>
                                     <Messages messages={history} myName={myUser.name}
                                         urUser={urUser} />
 
@@ -187,7 +187,7 @@ function Chat() {
                                 </Box>
 
                                 {/* form */}
-                                <Box className='inputForm' component='form' onSubmit={sendMessage} >
+                                <Box className={styles.inputForm} component='form' onSubmit={sendMessage} >
                                     <TextField
                                         sx={{
                                             borderRadius: 10,

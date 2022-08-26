@@ -2,6 +2,7 @@ const User = require('../models/User')
 const Product = require('../models/Product')
 const Category = require('../models/Category')
 const { slugify } = require('../utils/stringUtil')
+const qs = require('qs');
 
 let a = new Date(Date.now())
 let dateUTC = a.toUTCString().slice(0, 16)
@@ -60,13 +61,34 @@ module.exports.getRandom = async (req, res) => {
 
     try {
         //get all user 
-        Product.find((err, data) => {
-            res.json({ status: 'ok', product: data })
-        })
+        const product = await Product.find()
+        res.json({ status: 'ok', product: product.reverse() })
     } catch (err) {
         res.status(404).json({ err: err })
     }
 }
+
+module.exports.searchProduct = async (req, res) => {
+
+    try {
+
+        let name = req.query.name
+        let minPrice = req.query.minPrice
+        let maxPrice = req.query.maxPrice
+        let condition = req.query.condition
+        if (condition == 'All') condition = ''
+
+        const product = await Product.find({
+            name: { $regex: name, $options: 'i' },
+            condition: { $regex: condition, $options: 'i' },
+            price: { $gte: minPrice || 0, $lte: maxPrice || 99999999 }
+        })
+        res.json({ status: 'ok', product: product.reverse() })
+    } catch (err) {
+        res.status(404).json({ err: err })
+    }
+}
+
 module.exports.getListByUser = async (req, res) => {
     try {
         const user = await User.findById({ _id: req.params.slug })
@@ -126,32 +148,35 @@ module.exports.updateProduct = async (req, res) => {
         let delImages = data.delImages
         let updateImages = product.images
 
-        if (delImages) {
-
-            if (delImages.length > 10) { delImages = [data.delImages] }
-            updateImages = []
-            // db = [1,2,3,4]               del = [2,3]      =>  update = [1,4]
-            updateImages = imagesDb.filter(value => !delImages.includes(value))
-            if (updateImages == '') throw 'image is required'
-
-            // delete&put file in localfolder
-            const fs = require('fs');
-            for (img of delImages) {
-                try {
-                    let filePath = `../frontend/public/${img}`
-                    fs.unlinkSync(filePath);
-                } catch (err) {
-                    console.log(err);
-                }
-            }
-        }
-
         if (req.files) {
             for (img of req.files) {
                 let path = img.destination.slice(18,) + '/' + img.filename
                 updateImages.push(path)
             }
         }
+
+        if (delImages) {
+
+            if (delImages.length > 10) delImages = [data.delImages]
+            updateImages = []
+            // db = [1,2,3,4]               del = [2,3]      =>  update = [1,4]
+            updateImages = imagesDb.filter(value => !delImages.includes(value))
+
+            // delete&put file in localfolder
+            const fs = require('fs');
+            if (imagesDb.length != delImages.length) {
+                for (img of delImages) {
+                    try {
+                        let filePath = `../frontend/public/${img}`
+                        fs.unlinkSync(filePath);
+                    } catch (err) {
+                        console.log(err);
+                    }
+                }
+            }
+        }
+
+        if (updateImages == '') throw 'image is required'
 
         Product.findOneAndUpdate({ slug: slug },
             {

@@ -7,6 +7,7 @@ const ProductController = require('../controllers/products')
 const { uploadProd } = require('../utils/multer')
 
 router.get('/', ProductController.getRandom)
+router.get('/search', ProductController.searchProduct)
 router.get('/profile/:slug', ProductController.getListByUser)
 router.get('/product/:slug', ProductController.getSingleProduct)
 router.post('/product/add', authByToken, uploadProd.array('images', 7), ProductController.addProduct)
