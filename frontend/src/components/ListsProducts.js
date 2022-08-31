@@ -1,7 +1,9 @@
 import React from 'react'
 
-
-import { CardContent, Box, Card, Grid, Link, CardMedia, Typography, } from '@mui/material'
+import {
+    CardContent, Box, Card, Grid,
+    CardMedia, Typography
+} from '@mui/material'
 
 function ListsProducts({ listsItem, category }) {
 
@@ -9,17 +11,23 @@ function ListsProducts({ listsItem, category }) {
         return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     }
 
+    const pointer = {
+        cursor: "pointer"
+    }
+
     return (
-        <Box sx={{ bgcolor: '#18191A', p: 4 }}>
+        <Box sx={{ bgcolor: '#18191A', p: 4, borderLeft: 1, borderColor: '#393A3B', minHeight: '100%' }}>
             <Typography variant='h6' sx={{ mb: 3 }}>
                 {category ? category : "Today's picks"}
             </Typography>
             <Grid container spacing={1.5}  >
-                {listsItem && listsItem.map((data) => (
-                    <Grid item key={data._id} xs={6} sm={6} md={6} lg={4} xl={3}>
-                        <Link href={"/product/" + data.slug} style={{ textDecoration: 'none' }} >
+                {listsItem && listsItem.map((data, idx) => (
+                    <Grid item key={idx} xs={6} sm={6} md={6} lg={4} xl={3}>
+                        <a style={pointer} href={"/marketplace/product/" + data.slug}
+                            onClick={() => localStorage.setItem('scrollPosition', window.pageYOffset)}
+                        >
                             <Card
-                                sx={{ height: '100%', display: 'flex', flexDirection: 'column', boxShadow: 'none' }}
+                                sx={{ display: 'flex', flexDirection: 'column', boxShadow: 'none' }}
                             >
                                 <CardMedia
                                     component="img"
@@ -40,12 +48,12 @@ function ListsProducts({ listsItem, category }) {
                                     </Typography>
                                 </CardContent>
                             </Card>
-                        </Link>
+                        </a>
                     </Grid>
                 ))}
 
             </Grid>
-        </Box>
+        </Box >
     )
 }
 

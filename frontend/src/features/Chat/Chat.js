@@ -12,7 +12,7 @@ import { tokenExist } from '../../utils/tokenHandler'
 
 import AppBar from '../../components/AppBar'
 import Messages from './Messages';
-import Inbox from './Inbox';
+import List from './List';
 import styles from './css/chat.module.css'
 
 let socket
@@ -24,7 +24,7 @@ let corsOptions = {
 }
 
 const toTimeObj = (xx) => {
-    // turn String -> Obj
+    // String -> Obj && sort date
     let newFormat = xx
     for (let i in newFormat) {
         let n = new Date(newFormat[i]['updatedAt'])
@@ -40,7 +40,7 @@ const toTimeObj = (xx) => {
 const updateInbox = (inbox, user, message, room) => {
     let clone = inbox
     let idx = inbox.findIndex(val => val.chat_room === room)
-    // update latest Array fresh
+    // update latest Array fresh for sorting
     clone[idx]['sent'] = message
     clone[idx]['sentBy'] = user
     clone[idx]['updatedAt'] = new Date()
@@ -51,7 +51,6 @@ const updateInbox = (inbox, user, message, room) => {
 }
 
 function Chat() {
-
     const { id } = useParams()
     const navigate = useNavigate()
     const [start, setStart] = useState({})
@@ -60,17 +59,18 @@ function Chat() {
     const [message, setMessage] = useState('')
     const [messages, setMessages] = useState([])
 
-    const [thisRoom, setRoom] = useState('')
+    const [trig, setTrig] = useState(0)
     const [inbox, setInbox] = useState([])
+    const [thisRoom, setRoom] = useState('')
     const [history, setHistory] = useState([])
     const [isLoading, setIsLoading] = useState(true)
 
     const ENDPOINT = 'http://192.168.1.125:8080/'
     const myEndpoint = "http://192.168.1.125:8080/setting/"
     const seenEndpoint = "http://192.168.1.125:8080/seenchat"
-    const roomEndpoint = "http://192.168.1.125:8080/chat/" + id
     const chatEndpoint = "http://192.168.1.125:8080/userid/" + id
-    const sendEndpoint = `http://192.168.1.125:8080/chat/${id}/send`
+    const roomEndpoint = "http://192.168.1.125:8080/inbox/" + id
+    const sendEndpoint = `http://192.168.1.125:8080/inbox/${id}/send`
 
     const getUser = async () => {
         if (!tokenExist()) return navigate('/')
@@ -86,44 +86,43 @@ function Chat() {
         setStart(start)
         setInbox(sortInbox)
         setRoom(chatRoom)
-        setHistory(chatHistory)
+
+        //load once at first render
+        setIsLoading && setHistory(chatHistory)
         setIsLoading(false)
     }
 
+    //switch inbox
     useEffect(() => {
         init()
         getUser()
-    }, []) // eslint-disable-line react-hooks/exhaustive-deps  
-
-    useEffect(() => {
-        const interval = setInterval(() => {
-            getUser()
-            init()
-        }, 30000);
-        return () => clearInterval(interval);
-    }, []) // eslint-disable-line react-hooks/exhaustive-deps  
+    }, [id]) // eslint-disable-line react-hooks/exhaustive-deps  
 
     useEffect(() => {
         socket = io(ENDPOINT, corsOptions)
         inbox.forEach(element => {
             socket.emit('join', (element.chat_room))
         })
+        // inside out to trigger message
         socket.on('messages', ({ room, user, message }) => {
             let payload = { user: user, message: message }
             setMessages(messages => [...messages, payload])
-
+            //sort by time
             let fresh = updateInbox(inbox, user, message, room)
             setInbox(fresh)
         })
-    }, [inbox])
+    }, [inbox]) // eslint-disable-line react-hooks/exhaustive-deps 
 
     const sendMessage = async (event) => {
         event.preventDefault();
         if (message) {
             let payload = { user: myUser.name, message: message, room: thisRoom }
-            socket.emit('sendMessage', payload, () => { setMessage('') })
+            socket.emit('sendMessage', payload, () => {
+                setMessage('')
+                setTrig(val => val + 1)
+            })
             //send to seen
-            postAxios(seenEndpoint, { room: thisRoom })
+            postAxios(seenEndpoint, { room: thisRoom, toId: id })
             postAxios(sendEndpoint, { chatRoom: thisRoom, messages: payload })
             if (start === 1) navigate(0)
         }
@@ -165,7 +164,7 @@ function Chat() {
                                 </Box>
 
                                 <Box className={styles.inbox}>
-                                    <Inbox list={inbox} myUser={myUser} id={id} />
+                                    <List inbox={inbox} myUser={myUser} id={id} trig={trig} />
                                 </Box>
                             </Box>
                         </Grid>
@@ -182,8 +181,10 @@ function Chat() {
                                     <Messages messages={history} myName={myUser.name}
                                         urUser={urUser} />
 
+
                                     <Messages messages={messages} myName={myUser.name}
                                         urUser={urUser} />
+
                                 </Box>
 
                                 {/* form */}

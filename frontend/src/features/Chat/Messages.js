@@ -1,11 +1,21 @@
-import React from 'react'
+import React, { useEffect, useRef } from 'react'
 import {
     Box, Avatar
 } from '@mui/material';
-
 import styles from './css/chat.module.css'
 
 function Messages({ messages, myName, urUser }) {
+
+    const divRef = useRef()
+    //wait to load then scroll
+    setTimeout(() => {
+        divRef.current?.scrollIntoView()
+    }, 10);
+
+    useEffect(() => {
+        divRef.current?.scrollIntoView()
+    }, [messages])
+
     return (
         <>
             {messages && messages.map((message, i) =>
@@ -27,6 +37,7 @@ function Messages({ messages, myName, urUser }) {
                     </Box>
 
             )}
+            <div ref={divRef} />
         </>
     )
 }

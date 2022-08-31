@@ -18,7 +18,7 @@ function Category() {
 
     const { slug } = useParams()
     const navigate = useNavigate()
-    const [cate, setCate] = useState('Not found item on this category')
+    const [cate, setCate] = useState(`Not found item : ${slug}`)
     const [listsItem, setListsItem] = useState([])
     const [isLoading, setIsLoading] = useState(true)
     const endpoint = "http://192.168.1.125:8080/category/" + slug
@@ -28,14 +28,17 @@ function Category() {
         if (data.err) return navigate('/404')
         setListsItem(data.lists)
         setIsLoading(false)
-        setCate(data?.lists[0]['category'])
+        if (data.lists.length > 0) {
+            setCate(data?.lists[0]['category'] || 0)
+        }
     }
 
     useEffect(() => {
         getLists()
-    }, []) // eslint-disable-line react-hooks/exhaustive-deps   
+        setCate(`Not found item : ${slug}`)
+    }, [slug]) // eslint-disable-line react-hooks/exhaustive-deps   
 
-    if (isLoading) return <div>Loading</div>
+    if (isLoading) return <MyAppBar />
     else return (
         <Stack spacing={7}> {/*appbar*/}
             <MyAppBar />

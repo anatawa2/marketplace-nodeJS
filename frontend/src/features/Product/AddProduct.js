@@ -17,7 +17,7 @@ export default function AddProduct() {
     const userEndpoint = "http://192.168.1.125:8080/setting"
 
     const getMyUser = async () => {
-        if (!tokenExist()) return navigate('/login')
+        if (!tokenExist()) return navigate('/login', { replace: true })
         const { data } = await getAxios(userEndpoint)
         setMyUser(data.user)
     }

@@ -21,29 +21,32 @@ const ResponsiveAppBar = ({ searchElement }) => {
 
   const navigate = useNavigate()
   const { pathname } = useLocation()
-  const [notif, setNotif] = useState([])
-  const [inbox, setInbox] = useState([])
+  const [notif, setNotif] = useState()
   const [myUser, setMyUser] = useState({ name: '' })
   const [anchorElUser, setAnchorElUser] = useState(null);
 
   const Endpoint = "http://192.168.1.125:8080/notify"
   const myEndpoint = "http://192.168.1.125:8080/setting"
-  const inboxEndpoint = "http://192.168.1.125:8080/chat/"
 
   const getMyUser = async () => {
     if (!tokenExist()) return;
-    const { data } = await getAxios(myEndpoint)
-    setMyUser(data.user)
+    const { data: { user } } = await getAxios(myEndpoint)
+    setMyUser(user)
   }
 
   const getNotify = async () => {
-    if (tokenExist()) {
-      const { data } = await getAxios(Endpoint)
-      setNotif(data.inbox)
-      const { data: { inbox } } = await getAxios(inboxEndpoint)
-      setInbox(inbox[0])
-    }
+    const { data } = await getAxios(Endpoint)
+    setNotif(data.inbox)
   }
+
+  // //fetch every 3 sec  for realtime notify chat
+  // useEffect(() => {
+  //   const interval = setInterval(() => {
+  //     //notify
+  //     getNotify()
+  //   }, 3000);
+  //   return () => clearInterval(interval);
+  // }, []) // eslint-disable-line react-hooks/exhaustive-deps  
 
   useEffect(() => {
     getMyUser()
@@ -52,7 +55,10 @@ const ResponsiveAppBar = ({ searchElement }) => {
 
   const search = () => {
     if (pathname === '/marketplace') searchElement.current.focus()
-    else return navigate('/search')
+    else if (pathname === '/marketplace/notifications') searchElement.current.focus()
+    else if (pathname === '/marketplace/inbox') searchElement.current.focus()
+    else if (pathname === '/marketplace/search') searchElement.current.focus()
+    else return navigate('/marketplace/search')
   }
 
   const handleOpenUserMenu = (event) => {
@@ -78,7 +84,7 @@ const ResponsiveAppBar = ({ searchElement }) => {
             borderColor: "#393A3B",
           }}>
 
-          <Toolbar sx={{ my: -0.20 }} >
+          <Toolbar sx={{ my: -0.6 }} >
             <Box sx={{ ml: -1, mr: 1 }}>
               <Link href='/marketplace'>
                 <Avatar
@@ -133,21 +139,18 @@ const ResponsiveAppBar = ({ searchElement }) => {
                   open={Boolean(anchorElUser)}
                   onClose={handleCloseUserMenu}
                 >
-                  <Link href="/setting" underline="none" color="inherit">
-                    <MenuItem>My Account</MenuItem>
-                  </Link>
-                  <Link href={'/profile/' + myUser._id} underline="none" color="inherit">
+                  <Link onClick={() => navigate('/marketplace/profile/' + myUser._id)} underline="none" color="inherit">
                     <MenuItem>My Store</MenuItem>
                   </Link>
-                  <Link href={inbox && "/chat/" + inbox.user} underline="none" color="inherit">
-                    <MenuItem>Inbox</MenuItem>
+                  <Link onClick={() => navigate('/messenger/inbox')} underline="none" color="inherit">
+                    <MenuItem>Messenger</MenuItem>
                   </Link>
                   <MenuItem onClick={logout}>Logout</MenuItem>
                 </Menu>
               </Box>}
 
-            {!myUser.name ? null :
-              <Link href="/Notifications" underline="none" color="inherit">
+            {notif &&
+              <div onClick={() => navigate('/marketplace/notifications')} >
                 <Box sx={{ mx: -0.5 }}  >
                   <Tooltip title="Notifications">
                     <IconButton >
@@ -161,21 +164,21 @@ const ResponsiveAppBar = ({ searchElement }) => {
                     </IconButton>
                   </Tooltip>
                 </Box>
-              </Link>}
+              </div>}
 
-            <Link href="/setting" underline="none" color="inherit">
+            <div onClick={() => navigate('/setting')}>
               <Box sx={{ mr: -1 }}>
                 <Tooltip title="Your Profile">
                   <IconButton >
                     <Avatar alt={myUser.name} src={myUser.avatar}
                       sx={{
                         bgcolor: '#3A3B3C',
-                        width: 45, height: 45
+                        width: 45, height: 45,
                       }} />
                   </IconButton>
                 </Tooltip>
               </Box>
-            </Link>
+            </div>
 
           </Toolbar>
         </AppBar >

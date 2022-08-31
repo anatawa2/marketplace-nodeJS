@@ -11,7 +11,8 @@ import Profile from './features/View/Profile'
 import Category from './features/View/Category'
 import Marketplace from './features/View/Marketplace'
 
-import Inbox from './features/View/Inbox'
+import InboxNotify from './features/View/Inbox'
+import Inbox from "./features/Chat/Inbox";
 import Notifications from './features/View/Notifications'
 
 import Search from './features/Product/Search'
@@ -27,26 +28,27 @@ function App() {
       <Route path="/" element={<Navigate to='/marketplace' replace />} />
       <Route path="*" element={<Navigate to='/404' replace />} />
 
-      <Route path="chat/:id" element={<Chat />} />
-      <Route path="/marketplace" element={<Marketplace />} />
+      <Route path="marketplace" element={<Marketplace />} />
       <Route path="login" element={<Login />} />
       <Route path="setting" element={<Setting />} />
       <Route path="register" element={<Register />} />
 
-      <Route path="category/:slug" element={<Category />} />
 
       {/* <Route path="search/" element={<Marketplace  />} /> */}
-      <Route path="search/" element={<Marketplace auto={true} />} />
-      <Route path="query/" element={<Search />} />
-      <Route path="product/:slug" element={<Product />} />
-      <Route path="product/add" element={<AddProduct />} />
-      <Route path="product/update/:slug" element={<UpProduct />} />
-      <Route path="product/delete/:slug" element={<DelProduct />} />
+      <Route path="marketplace/query/" element={<Search />} />
+      <Route path="marketplace/search/" element={<Marketplace auto={true} />} />
+      <Route path="marketplace/category/:slug" element={<Category />} />
+      <Route path="marketplace/product/:slug" element={<Product />} />
+      <Route path="marketplace/product/add" element={<AddProduct />} />
+      <Route path="marketplace/product/update/:slug" element={<UpProduct />} />
+      <Route path="marketplace/product/delete/:slug" element={<DelProduct />} />
 
-      <Route path="profile/:slug" element={<Profile />} />
-      <Route path="inbox" element={<Inbox />} />
-      <Route path="notifications" element={<Notifications />} />
+      <Route path="marketplace/profile/:slug" element={<Profile />} />
+      <Route path="marketplace/notifications" element={<Notifications />} />
 
+      <Route path="messenger" element={<InboxNotify />} />
+      <Route path="messenger/inbox" element={<Inbox />} />
+      <Route path="messenger/inbox/:id" element={<Chat />} />
       <Route path="404" element={<Page404 />} />
       <Route path="appbar" element={<AppBar />} />
       <Route path="temp" element={<Navigate to="/" />} />

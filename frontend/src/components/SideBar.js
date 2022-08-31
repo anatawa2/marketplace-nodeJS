@@ -11,7 +11,7 @@ import NotificationsIcon from '@mui/icons-material/Notifications';
 
 import {
   TextField, InputAdornment, Button,
-  Avatar, Box, Link, Radio
+  Avatar, Box, Radio,
 }
   from '@mui/material';
 
@@ -30,7 +30,7 @@ function SideBar({ pathname, slug, auto, searchElement }) {
 
   const onSearch = () => {
     let path
-    if (search) path = `/query?name=${search}`
+    if (search) path = `/marketplace/query?name=${search}`
     if (checked) path += `&condition=${checked}`
     if (minPrice) path += `&minPrice=${minPrice}`
     if (maxPrice) path += `&maxPrice=${maxPrice}`
@@ -47,6 +47,8 @@ function SideBar({ pathname, slug, auto, searchElement }) {
   }
 
   const boo = () => { alert('No features') }
+  //css button
+  if (pathname === '/search') pathname = '/marketplace'
 
   return (
     <>
@@ -160,10 +162,10 @@ function SideBar({ pathname, slug, auto, searchElement }) {
         </>
       }
 
-      {/* Nav */}
+      {/* Menu */}
       <Box>
         {!slug && menu.map((val, idx) => (
-          <Link href={val.link} key={idx} underline="none" color="inherit">
+          <div onClick={() => navigate(val.link)} key={idx} className={styles.pointer}>
             <Box className={styles.listing}
               sx={{ bgcolor: val.link === pathname ? '#3A3B3C' : '' }}>
               <Avatar
@@ -178,15 +180,15 @@ function SideBar({ pathname, slug, auto, searchElement }) {
                 {val.name}
               </Box>
             </Box>
-          </Link>
+          </div>
         ))}
 
         {/* Add Button */}
-        <Link href='/product/add' underline="none" >
+        <div onClick={() => navigate('/marketplace/product/add')} className={styles.pointer}>
           <Box className={styles.button}>
             + Create new listing
           </Box>
-        </Link>
+        </div>
         <Box className={styles.filter}>
           <Box>
             Filters
@@ -204,8 +206,8 @@ function SideBar({ pathname, slug, auto, searchElement }) {
           </Box>
 
           {categories?.map((val, idx) => (
-            <Link href={val.icon ? null : '/category/' + val.value}
-              key={idx} underline="none" color="inherit">
+            <div onClick={() => navigate(val.icon ? '' : '/marketplace/category/' + val.value)}
+              key={idx} className={styles.pointer}>
 
               <Box className={val.icon ? styles.icon : styles.listing}
                 sx={{ bgcolor: val.value === pathname ? '#3A3B3C' : '' }}>
@@ -222,7 +224,7 @@ function SideBar({ pathname, slug, auto, searchElement }) {
                 </Box>
               </Box>
 
-            </Link>
+            </div>
           ))}
         </Box>
 
@@ -233,8 +235,8 @@ function SideBar({ pathname, slug, auto, searchElement }) {
 
 const menu = [
   { icon: <StorefrontIcon />, name: 'Browse all', link: '/marketplace' },
-  { icon: <NotificationsIcon />, name: 'Notifications', link: '/Notifications' },
-  { icon: <DraftsIcon />, name: 'Inbox', link: '/inbox' },
+  { icon: <NotificationsIcon />, name: 'Notifications', link: '/marketplace/notifications' },
+  { icon: <DraftsIcon />, name: 'Inbox', link: '/messenger' },
   { icon: <ShoppingBagIcon />, name: 'Buying', link: '' },
   { icon: <LocalOfferIcon />, name: 'Selling', link: '' },
 ]

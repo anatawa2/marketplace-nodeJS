@@ -68,11 +68,11 @@ function Profile() {
 
     }
 
-    if (isLoaded) return (<div>Loading</div>)
+    if (isLoaded) return <AppBar />
     else {
         return (
             <div>
-                <AppBar/>
+                <AppBar />
                 <Container component="main" maxWidth="xs">
                     <Box
                         sx={{

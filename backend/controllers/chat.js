@@ -27,9 +27,9 @@ module.exports.onChatRoom = async (req, res) => {
         let chatHistory = []
         if (!!currentRoom) {
             chatHistory = await Chat.findOne({ chat_room: currentRoom })
-            // set user to seen
-            let inbox = await Inbox.findOne({ chat_room: currentRoom })
-            inbox.seen = true
+            // set user to seen if enter chat
+            // let inbox = await Inbox.findOne({ chat_room: currentRoom })
+            // inbox.seen = true
             // inbox.save()
 
         } else {
@@ -157,10 +157,17 @@ module.exports.chatNotify = async (req, res) => {
 module.exports.clickToSeen = async (req, res) => {
 
     try {
+        const room = req.body.room
+
         const user = await User.findOne({ email: req.user.email })
-        const chat = await Inbox.findOne({ owner: user._id, chat_room: req.body.room })
-        chat.seen = true
-        chat.save()
+        const me = await Inbox.findOne({ owner: user._id, chat_room: room })
+        me.seen = true
+        me.save()
+
+        const you = await Inbox.findOne({ owner: req.body.toId, chat_room: room })
+        you.seen = false
+        you.save()
+
         return res.json({ status: "ok" })
 
     } catch (err) {

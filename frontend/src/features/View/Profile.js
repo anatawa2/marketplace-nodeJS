@@ -14,7 +14,7 @@ import CardContent from '@mui/material/CardContent';
 import CssBaseline from '@mui/material/CssBaseline';
 
 import { getAxios } from '../../utils/axios'
-import { useParams } from 'react-router-dom'; 
+import { useParams } from 'react-router-dom';
 
 function Profile() {
 
@@ -76,7 +76,7 @@ function Profile() {
                     />
                   ))}
                   <CardContent sx={{ flexGrow: 1 }}>
-                    <Link href={"/product/" + product.slug} style={{ textDecoration: 'none' }}>
+                    <Link href={"/marketplace/product/" + product.slug} style={{ textDecoration: 'none' }}>
                       <Typography gutterBottom variant="h5" component="h2">
                         {product.name}
                       </Typography>
@@ -94,7 +94,7 @@ function Profile() {
                       Date: {product.date}
                     </Typography>
                     <Typography>
-                      <Link href={"/product/update/" + product.slug} variant="body2">
+                      <Link href={"/marketplace/product/update/" + product.slug} variant="body2">
                         update
                       </Link>
                     </Typography>

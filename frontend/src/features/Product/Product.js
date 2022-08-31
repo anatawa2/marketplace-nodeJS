@@ -1,12 +1,14 @@
 import * as React from 'react';
 import { useState, useEffect } from 'react'
 import { useNavigate } from "react-router-dom";
+import moment from "moment";
 
 import {
-  Avatar, Box, Link, TextField
+  Avatar, Box,
 } from '@mui/material';
 
 import styles from './css/product.module.css'
+import img from './css/images.module.css'
 
 import AppBar from '../../components/AppBar'
 import { useParams } from 'react-router-dom'
@@ -21,12 +23,15 @@ export default function Product() {
   const [isLoading, setIsLoading] = useState(true)
   const endpoint = "http://192.168.1.125:8080/product/" + slug
 
+  const [showImg, setShowImg] = useState()
+
   const getProduct = async () => {
     const { data } = await getAxios(endpoint)
     if (!data.product) return navigate('/404')
+    setIsLoading(false)
     setProduct(data.product)
     setUser(data.user)
-    setIsLoading(false)
+    setShowImg(data.product.images[0])
   }
 
   useEffect(() => {
@@ -34,85 +39,117 @@ export default function Product() {
 
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
-  // const timeString = (t) => {
-  //   let now = new Date(t)
-  //   return now.toDateString()
-  // }
+  const changeHandle = (val) => {
+    setShowImg(val)
+  }
 
+  const selectImage = (x) => {
+    let index = product.images.indexOf(showImg)
+    let point = index + x
+    let stock = product.images.length - 1
 
-  if (isLoading) return (<div>Loading</div>)
+    if (point > stock) {
+      point = 0
+    }
+    if (point < 0) {
+      point = stock
+    }
+    setShowImg(product.images[point])
+  }
+
+  function numberWithCommas(x) {
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  }
+
+  const timeString = (t) => {
+    let now = new Date(t)
+    return moment(now).subtract(10, 'days').calendar();
+  }
+
+  if (isLoading) return <AppBar />
   else return (
     <>
-
       <AppBar />
 
       {/* IMAGE */}
-      <Box className={styles.flexContainer}>
+      <Box className={styles.flexContainer} >
 
         <Box className={styles.item1}>
 
-          <div className={styles.bg}><img alt='pic' src={product.images[0]} /></div>
+          <div className={img.box}>
+            <div onClick={() => navigate(-1)} className={img.back} >X</div>
+
+            {product.images.length > 1 &&
+              <>
+                <div div className={img.btn} >
+                  <div onClick={() => selectImage(-1)} >
+                    &lt;
+                  </div>
+                  <div onClick={() => selectImage(1)} >
+                    &gt;
+                  </div>
+                </div>
+              </>
+            }
+
+            <div className={img.image}>
+              <img src={showImg} alt='pic' />
+            </div>
+          </div>
+
+          {/* Lists */}
+          <div className={img.lists}>
+            {product.images.map((val, idx) => (
+              <div key={idx} className={img.item} onClick={() => changeHandle(val)}>
+                <div className={val === showImg ? img.img1 : img.img0}>
+                  <img src={val} alt={idx} />
+                </div>
+              </div>
+            ))}
+          </div>
 
 
+          {/* BG */}
+          <div className={styles.bg}><img alt='pic' src={showImg} /></div>
 
         </Box>
 
         {/* DESCRIPTION */}
         <Box className={styles.item2}>
-          <div className={styles.desc}>
+          <div className={styles.text}>
             <h2>{product.name}</h2>
             <p>Detail</p>
-            <p>฿ {product.price}</p>
+            <p>฿ {numberWithCommas(product.price)}</p>
             <p>Condition : {product.condition}</p>
             <p>{product.desc}</p>
-
-            {/* Profile */}
-            <div className={styles.xxx}>
-              <p>Seller Information</p>
-              <Link href={'/profile/' + user._id} underline="none" color="inherit" >
-                <div className={styles.profile}>
-                  <Avatar alt={user.name} src={user.avatar}
-                    sx={{
-                      bgcolor: '#3A3B3C',
-                      width: 60, height: 60,
-                    }} />
-
-                  <p>{user.name}</p>
-                </div>
-              </Link>
-              Joined Facebook in 2022
-            </div>
-
+            <h5>Last update : {timeString(product.createdAt)}</h5>
           </div>
 
-          {/* Message */}
-          <div className={styles.messageTab}>
-            <Box sx={{ my: 0.7 }}>
-              <TextField
-                sx={{
-                  borderRadius: 3,
-                  bgcolor: '#3A3B3C',
-                  py: 0.7,
-                  pl: 2,
-                }}
-                fullWidth
-                variant="standard"
-                InputProps={{
-                  disableUnderline: true,
-                }}
-              />
-            </Box>
-            {/* Button */}
-            <Link href='#' underline="none" color="inherit" >
-              <div className={styles.buttonx}>
-                Send
+          {/* Profile */}
+          <div className={styles.badge} >
+            <p>Seller Information</p>
+            <div onClick={() => navigate('/marketplace/profile/' + user._id)}  >
+              <div className={styles.profile}>
+                <Avatar alt={user.name} src={user.avatar}
+                  sx={{
+                    bgcolor: '#3A3B3C',
+                    width: 60, height: 60,
+                  }} />
+                <p>{user.name}</p>
               </div>
-            </Link>
+            </div>
+            Joined Facebook in 2022
+          </div>
+
+          {/* Button */}
+          <div onClick={() => navigate('/')} className={styles.pointer}>
+            <div className={styles.buttonx}>
+              Send
+            </div>
           </div>
 
         </Box>
       </Box>
-
     </>
   )
 }
