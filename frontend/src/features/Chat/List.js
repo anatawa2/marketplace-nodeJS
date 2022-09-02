@@ -36,29 +36,53 @@ const toTimeObj = (xx) => {
 }
 
 
-function List({ inbox, myUser, id, trig }) {
+function List({ inbox, myUser, id, trig, search }) {
 
     const navigate = useNavigate()
     const [lists, setLists] = useState([])
+    const [timerId, setTimerId] = useState(0)
+    const [startTimer, setStartTimer] = useState(true)
     const endpoint = "http://192.168.1.125:8080/inbox/" + id
 
     const init = async () => {
         const { data: { inbox } } = await getAxios(endpoint)
         let sortInbox = toTimeObj(inbox)
         setLists(sortInbox)
+        console.log('init');
     }
-    //trigger fetch reload
-    useEffect(() => {
-        const interval = setInterval(() => {
-            init() // fetch from db every 5 sec            
-        }, 2000);
-        return () => clearInterval(interval);
-    }, []) // eslint-disable-line react-hooks/exhaustive-deps  
 
-    //trigger new msg 
+    //trigger fetch reload (you)
+    useEffect(() => {
+        let intervalId = null
+        if (startTimer) {
+            intervalId = setInterval(() => {
+                init() // fetch from db every 5 sec   
+                console.log('timer');
+            }, 1000)
+            setTimerId(intervalId)
+        } else {
+            clearInterval(timerId)
+        }
+    }, [startTimer]) // eslint-disable-line react-hooks/exhaustive-deps  
+
+    //trigger new msg & searching (me)
     useEffect(() => {
         setLists(inbox)
-    }, [trig]) // eslint-disable-line react-hooks/exhaustive-deps
+        if (search === '') init()
+    }, [trig]) // eslint-disable-line react-hooks/exhaustive-deps   
+
+    useEffect(() => {
+        let val = search.match(/^[a-zA-Z0-9_ ]*$/i) //allow spaces between words 
+        let reg = new RegExp(val, 'gi')
+        let filter = inbox.filter(val => val.name.match(reg))
+        setLists(filter)
+        if (search) {
+            setStartTimer(false)
+        } else {
+            init()
+            setStartTimer(true)
+        }
+    }, [search]) // eslint-disable-line react-hooks/exhaustive-deps  
 
     const run = (id) => {
         navigate('/messenger/inbox/' + id)
@@ -88,7 +112,7 @@ function List({ inbox, myUser, id, trig }) {
                             {user.sent.length < 20
                                 ?
                                 user.sent
-                                : user.sent.substr(0, 20) + '...'}
+                                : user.sent.substr(0, 8) + '...'}
                             •&nbsp;
                             {timeString(user.updatedAt)}
                         </Box>

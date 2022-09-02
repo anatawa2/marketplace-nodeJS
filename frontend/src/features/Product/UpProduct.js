@@ -30,6 +30,7 @@ function UpProduct() {
         const { data: { product } } = await getAxios(getEndpoint)
         //verify
         if (user._id !== product.owner) return navigate('/')
+        setInputs(values => ({ ...values, id: product.owner }))
         if (!product) return navigate('/404')
         setInputs(product)
 
@@ -95,7 +96,7 @@ function UpProduct() {
             return navigate(0)
         }
         Swal.ok()
-        navigate('/product/' + data.slug)
+        return navigate('/marketplace/profile/' + inputs.owner)
 
     }
 

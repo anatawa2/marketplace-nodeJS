@@ -5,9 +5,10 @@ import {
 }
   from '@mui/material';
 
+import './css/global.css'
+
 import SearchIcon from '@mui/icons-material/Search';
 import AppsIcon from '@mui/icons-material/Apps';
-import NotificationsIcon from '@mui/icons-material/Notifications';
 
 import { nav } from './theme/AppBarTheme'
 import { useNavigate, useLocation } from "react-router-dom";
@@ -112,7 +113,7 @@ const ResponsiveAppBar = ({ searchElement }) => {
 
             {/* Menu */}
             {myUser.name === '' ? null :
-              <Box sx={{ mx: -0.5 }}>
+              <Box sx={{ mx: -0.7 }}>
                 <Tooltip title="Menu">
                   <IconButton onClick={handleOpenUserMenu}>
                     <Avatar sx={{
@@ -139,35 +140,48 @@ const ResponsiveAppBar = ({ searchElement }) => {
                   open={Boolean(anchorElUser)}
                   onClose={handleCloseUserMenu}
                 >
-                  <Link onClick={() => navigate('/marketplace/profile/' + myUser._id)} underline="none" color="inherit">
-                    <MenuItem>My Store</MenuItem>
+                  <Link onClick={() => navigate('/marketplace/notifications')} underline="none" color="inherit">
+                    <MenuItem>Notifications</MenuItem>
                   </Link>
-                  <Link onClick={() => navigate('/messenger/inbox')} underline="none" color="inherit">
-                    <MenuItem>Messenger</MenuItem>
+                  <Link onClick={() => navigate('/setting')} underline="none" color="inherit">
+                    <MenuItem>Setting</MenuItem>
                   </Link>
                   <MenuItem onClick={logout}>Logout</MenuItem>
                 </Menu>
               </Box>}
 
             {notif &&
-              <div onClick={() => navigate('/marketplace/notifications')} >
-                <Box sx={{ mx: -0.5 }}  >
-                  <Tooltip title="Notifications">
+              <div onClick={() => navigate('/messenger/inbox')}>
+                <Box sx={{ mr: -0.5 }}>
+                  <Tooltip title="Your Profile">
                     <IconButton >
-                      <Avatar sx={{
-                        bgcolor: '#3A3B3C',
-                        width: 45, height: 45
-                      }}>
-                        <NotificationsIcon />
-                        {notif.length > 0 && notif.length}
-                      </Avatar>
+                      <Avatar alt={myUser.name} src={'/images/msg.png'}
+                        sx={{
+                          bgcolor: '#3A3B3C',
+                          width: 45, height: 45,
+                          border: 11, borderColor: '#3A3B3C'
+                        }} />
                     </IconButton>
                   </Tooltip>
                 </Box>
               </div>}
 
-            <div onClick={() => navigate('/setting')}>
-              <Box sx={{ mr: -1 }}>
+            {notif &&
+              <div>
+                <Box className='msgNotify'>
+                  {notif.length}
+                </Box>
+              </div>
+            }
+
+            <div onClick={() => {
+              myUser._id
+                ?
+                navigate('/marketplace/profile/' + myUser._id)
+                :
+                navigate('/login')
+            }}>
+              <Box>
                 <Tooltip title="Your Profile">
                   <IconButton >
                     <Avatar alt={myUser.name} src={myUser.avatar}

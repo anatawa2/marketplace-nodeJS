@@ -49,6 +49,8 @@ export default function AddProduct() {
         }
         setSelectedImages(selectedImages.filter((img) => img !== imageSrc))
     }
+    console.log('selectedImages :', selectedImages);
+    console.log('fileLists :', fileLists);
 
     const handleChange = (event) => {
         const name = event.target.name;
@@ -70,10 +72,11 @@ export default function AddProduct() {
                 formData.append('images', fileLists[i])
             }
         }
+
         const endpoint = "http://192.168.1.125:8080/product/add"
         const { data } = await postAxios(endpoint, formData)
-        if (!data.status) return Swal.err(data.err)
-        navigate('/profile/' + myUser._id)
+        if (data.err) return Swal.err(data?.err)
+        navigate('/marketplace/profile/' + myUser._id)
         navigate(0)
 
     }

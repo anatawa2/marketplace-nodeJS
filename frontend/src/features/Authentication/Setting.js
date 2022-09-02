@@ -25,7 +25,7 @@ function Profile() {
     const [newAvatar, setnewAvatar] = useState()
 
     const getMyUser = async () => {
-        if (!tokenExist()) navigate('/login')
+        if (!tokenExist()) navigate('/login', { replace: true })
         const { data } = await getAxios(endpoint)
         setInputs(data.user)
         setIsLoaded(false)
@@ -68,7 +68,7 @@ function Profile() {
 
     }
 
-    if (isLoaded) return <AppBar />
+    if (isLoaded) return
     else {
         return (
             <div>

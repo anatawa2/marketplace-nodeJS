@@ -59,6 +59,7 @@ function Chat() {
     const [message, setMessage] = useState('')
     const [messages, setMessages] = useState([])
 
+    const [search, setSearch] = useState('')
     const [trig, setTrig] = useState(0)
     const [inbox, setInbox] = useState([])
     const [thisRoom, setRoom] = useState('')
@@ -73,22 +74,24 @@ function Chat() {
     const sendEndpoint = `http://192.168.1.125:8080/inbox/${id}/send`
 
     const getUser = async () => {
-        if (!tokenExist()) return navigate('/')
+        if (!tokenExist()) return navigate('/login', { replace: true })
         const { data: my } = await getAxios(myEndpoint)
         const { data: ur } = await getAxios(chatEndpoint)
-        setMyUser(my.user)
-        setUrUser(ur.user)
+        setMyUser(my?.user)
+        setUrUser(ur?.user)
     }
 
     const init = async () => {
         const { data: { chatRoom, inbox, chatHistory, start } } = await getAxios(roomEndpoint)
-        let sortInbox = toTimeObj(inbox)
-        setStart(start)
-        setInbox(sortInbox)
-        setRoom(chatRoom)
+        if (chatRoom) {
+            let sortInbox = toTimeObj(inbox)
+            setStart(start)
+            setInbox(sortInbox)
+            setRoom(chatRoom)
 
-        //load once at first render
-        setIsLoading && setHistory(chatHistory)
+            //load once at first render
+            setIsLoading && setHistory(chatHistory)
+        }
         setIsLoading(false)
     }
 
@@ -149,6 +152,9 @@ function Chat() {
                                                 pl: 1,
                                             }}
                                             fullWidth
+                                            value={search}
+                                            onChange={(e) => { setSearch(e.target.value) }}
+                                            autoComplete="off"
                                             variant="standard"
                                             placeholder='Search Messenger'
                                             InputProps={{
@@ -164,7 +170,8 @@ function Chat() {
                                 </Box>
 
                                 <Box className={styles.inbox}>
-                                    <List inbox={inbox} myUser={myUser} id={id} trig={trig} />
+                                    <List inbox={inbox} myUser={myUser} id={id}
+                                        trig={trig} search={search} />
                                 </Box>
                             </Box>
                         </Grid>
@@ -196,10 +203,10 @@ function Chat() {
                                             py: 0.4,
                                             pl: 1,
                                         }}
-                                        autoComplete={undefined}
                                         autoFocus
                                         fullWidth
                                         placeholder='Aa'
+                                        autoComplete="off"
                                         variant="standard"
                                         value={message}
                                         InputProps={{ disableUnderline: true, }}

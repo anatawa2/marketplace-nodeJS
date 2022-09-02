@@ -19,15 +19,22 @@ export default function Product() {
   const { slug } = useParams()
   const navigate = useNavigate()
   const [user, setUser] = useState([])
+  const [myUser, setMyUser] = useState({ name: '' })
   const [product, setProduct] = useState([])
   const [isLoading, setIsLoading] = useState(true)
+  const myEndpoint = "http://192.168.1.125:8080/setting"
   const endpoint = "http://192.168.1.125:8080/product/" + slug
+
+  const getMyUser = async () => {
+    const { data: { user } } = await getAxios(myEndpoint)
+    if (user) setMyUser(user)
+  }
 
   const [showImg, setShowImg] = useState()
 
   const getProduct = async () => {
     const { data } = await getAxios(endpoint)
-    if (!data.product) return navigate('/404')
+    if (!data.product) return navigate('/404', { replace: true })
     setIsLoading(false)
     setProduct(data.product)
     setUser(data.user)
@@ -36,6 +43,7 @@ export default function Product() {
 
   useEffect(() => {
     getProduct()
+    getMyUser()
 
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -81,7 +89,7 @@ export default function Product() {
 
             {product.images.length > 1 &&
               <>
-                <div div className={img.btn} >
+                <div className={img.btn} >
                   <div onClick={() => selectImage(-1)} >
                     &lt;
                   </div>
@@ -118,11 +126,11 @@ export default function Product() {
         <Box className={styles.item2}>
           <div className={styles.text}>
             <h2>{product.name}</h2>
-            <p>Detail</p>
+            <p>-------Detail-------</p>
             <p>฿ {numberWithCommas(product.price)}</p>
             <p>Condition : {product.condition}</p>
             <p>{product.desc}</p>
-            <h5>Last update : {timeString(product.createdAt)}</h5>
+            <h5>Last update : {timeString(product.updatedAt)}</h5>
           </div>
 
           {/* Profile */}
@@ -142,11 +150,21 @@ export default function Product() {
           </div>
 
           {/* Button */}
-          <div onClick={() => navigate('/')} className={styles.pointer}>
-            <div className={styles.buttonx}>
-              Send
+          {myUser.name === user.name
+            ?
+            <div onClick={() => navigate(`/marketplace/product/update/${slug}`)}
+              className={styles.pointer}>
+              <div className={styles.buttonx}>
+                Update
+              </div>
             </div>
-          </div>
+            :
+            <div onClick={() => navigate(`/messenger/inbox/${user._id}`)} className={styles.pointer}>
+              <div className={styles.buttonx}>
+                Send
+              </div>
+            </div>
+          }
 
         </Box>
       </Box>

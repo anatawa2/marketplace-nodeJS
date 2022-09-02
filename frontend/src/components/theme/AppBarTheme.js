@@ -29,7 +29,7 @@ export const darkTheme = createTheme({
     MuiInputBase: { //InputProps
       defaultProps: {
         // The props to change the default for.
-        disableUnderline: true,
+        // disableUnderline: true,
       },
     },
 

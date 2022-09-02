@@ -34,6 +34,7 @@ function SideBar({ pathname, slug, auto, searchElement }) {
     if (checked) path += `&condition=${checked}`
     if (minPrice) path += `&minPrice=${minPrice}`
     if (maxPrice) path += `&maxPrice=${maxPrice}`
+    if (!search) return navigate('/')
     navigate(path)
   }
 
@@ -84,7 +85,7 @@ function SideBar({ pathname, slug, auto, searchElement }) {
             value={search}
             autoFocus={auto}
             onChange={(e) => { setSearch(e.target.value) }}
-            onKeyPress={e => e.key === 'Enter' ? (search && onSearch()) : null}
+            onKeyPress={e => e.key === 'Enter' ? (onSearch()) : null}
             variant="standard"
             placeholder='Search marketplace'
             InputProps={{
@@ -165,7 +166,8 @@ function SideBar({ pathname, slug, auto, searchElement }) {
       {/* Menu */}
       <Box>
         {!slug && menu.map((val, idx) => (
-          <div onClick={() => navigate(val.link)} key={idx} className={styles.pointer}>
+          <div onClick={() => val.link ? navigate(val.link) : alert('upcoming')}
+            key={idx} className={styles.pointer}>
             <Box className={styles.listing}
               sx={{ bgcolor: val.link === pathname ? '#3A3B3C' : '' }}>
               <Avatar

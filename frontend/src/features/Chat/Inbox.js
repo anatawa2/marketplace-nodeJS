@@ -42,20 +42,20 @@ function Inbox() {
 
     const navigate = useNavigate()
     const [inbox, setInbox] = useState([])
+    const [search, setSearch] = useState('')
     const [myUser, setMyUser] = useState({ name: '' })
     const [isLoading, setIsLoading] = useState(true)
     const endpoint = "http://192.168.1.125:8080/inbox/"
     const myEndpoint = "http://192.168.1.125:8080/setting"
 
     const getMyUser = async () => {
-        if (!tokenExist()) return;
+        if (!tokenExist()) return navigate('/')
         const { data: { user } } = await getAxios(myEndpoint)
         setMyUser(user)
     }
 
     const init = async () => {
         const { data: { inbox } } = await getAxios(endpoint)
-        console.log(inbox);
         let sortInbox = toTimeObj(inbox)
         setInbox(sortInbox)
         setIsLoading(false)
@@ -64,14 +64,22 @@ function Inbox() {
     useEffect(() => {
         getMyUser()
         init()
-    }, []) // eslint-disable-line react-hooks/exhaustive-deps  
+    }, []) // eslint-disable-line react-hooks/exhaustive-deps   
+
+    useEffect(() => {
+        let val = search.match(/^[a-zA-Z0-9_ ]*$/i) //allow spaces between words 
+        let reg = new RegExp(val, 'gi')
+        let filter = inbox.filter(val => val.name.match(reg))
+        setInbox(filter)
+        if (search === '') init()
+    }, [search]) // eslint-disable-line react-hooks/exhaustive-deps  
 
     const run = (id) => {
         navigate('/messenger/inbox/' + id)
         navigate(0)
     }
 
-    if (isLoading) return <AppBar />
+    if (isLoading) return 
     else return (
         <Stack spacing={7}>
             <AppBar />
@@ -91,6 +99,9 @@ function Inbox() {
                                             pl: 1,
                                         }}
                                         fullWidth
+                                        value={search}
+                                        onChange={(e) => setSearch(e.target.value)}
+                                        autoComplete="off"
                                         variant="standard"
                                         placeholder='Search Messenger'
                                         InputProps={{
@@ -127,7 +138,7 @@ function Inbox() {
                                                 {user.sent.length < 20
                                                     ?
                                                     user.sent
-                                                    : user.sent.substr(0, 20) + '...'}
+                                                    : user.sent.substr(0, 8) + '...'}
                                                 •&nbsp;
                                                 {timeString(user.updatedAt)}
                                             </Box>

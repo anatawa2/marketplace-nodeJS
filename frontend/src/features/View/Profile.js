@@ -13,6 +13,8 @@ import Typography from '@mui/material/Typography';
 import CardContent from '@mui/material/CardContent';
 import CssBaseline from '@mui/material/CssBaseline';
 
+import ListsProducts from '../../components/ListsProducts';
+
 import { getAxios } from '../../utils/axios'
 import { useParams } from 'react-router-dom';
 
@@ -21,7 +23,7 @@ function Profile() {
   const { slug } = useParams()
   const navigate = useNavigate()
   const [profile, setProfile] = useState([])
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
   const [listsProduct, setListsProduct] = useState([])
   const endpoint = "http://192.168.1.125:8080/profile/" + slug
 
@@ -30,83 +32,37 @@ function Profile() {
     if (data.err) return navigate('/404')
     setListsProduct(data.lists)
     setProfile(data.user)
+    setIsLoading(false)
   }
 
   useEffect(() => {
-    setIsLoading(true)
     getProfile()
-    setIsLoading(false)
   }, []) // eslint-disable-line react-hooks/exhaustive-deps   
 
-  if (isLoading) return (<div>Loading</div>)
+  let stock = ` Marketplace Listings - ${listsProduct.length}`
+
+  if (isLoading) return
   else return (
-    <div>
+    <>
       <AppBar />
-      <CssBaseline />
-      <main>
-        {/* Hero unit */}
-        <Box
-          sx={{
-            bgcolor: 'background.paper',
-            pt: 4,
-            pb: 3,
-          }}
-        >
-        </Box>
+      <Box
+        sx={{
+          pt: 4,
+          pb: 3,
+        }}
+      >
+      </Box>
 
-        <img src={profile.avatar} width="150" height="150" alt="avatar" />
-        {profile.name}
+      <div className='profile'> 
+          <img src={profile.avatar} alt="avatar" />
+          <h2>{profile.name}</h2>
+          <h4>Bio: {profile.bio}</h4> 
+      </div>
 
-        <Container sx={{ py: 3 }} maxWidth="md">
-          {/* End hero unit */}
-          {listsProduct && listsProduct.map((product) => (
-            <Grid key={product._id} container spacing={4} >
-              <Grid item xs={12} sm={6} md={4} >
-                <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }} >
-                  {product.images && product.images.map((img, idx) => (
-                    <CardMedia
-                      key={idx}
-                      component="img"
-                      sx={{
-                        // 16:9
-                        pt: '56.25%',
-                      }}
-                      image={img}
-                      alt="random"
-                    />
-                  ))}
-                  <CardContent sx={{ flexGrow: 1 }}>
-                    <Link href={"/marketplace/product/" + product.slug} style={{ textDecoration: 'none' }}>
-                      <Typography gutterBottom variant="h5" component="h2">
-                        {product.name}
-                      </Typography>
-                    </Link>
-                    <Typography >
-                      ฿ {product.price}
-                    </Typography>
-                    <Typography>
-                      Description: {product.desc}
-                    </Typography>
-                    <Typography>
-                      condition: {product.condition}
-                    </Typography>
-                    <Typography>
-                      Date: {product.date}
-                    </Typography>
-                    <Typography>
-                      <Link href={"/marketplace/product/update/" + product.slug} variant="body2">
-                        update
-                      </Link>
-                    </Typography>
-                  </CardContent>
-                </Card>
-              </Grid>
-            </Grid>
-          ))}
-
-        </Container>
-      </main>
-    </div >
+      <Container>
+        <ListsProducts listsItem={listsProduct} category={stock} page={'profile'} />
+      </Container>
+    </>
   )
 }
 

@@ -6,9 +6,11 @@ import {
 
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { categories, conditions } from '../utils/categories'
+import { Link } from 'react-router-dom';
 
 export function FormProduct({ handleSubmit, handleChange,
     selectedImages, removeImages, onSelectFile, inputs, type }) {
+    console.log('inputs :', inputs);
     return (
         <div>
             <Container component="main" maxWidth="xs">
@@ -112,17 +114,15 @@ export function FormProduct({ handleSubmit, handleChange,
                             <Grid item xs={12}>
                                 <Stack direction="row" alignItems="center" spacing={2}>
                                     {selectedImages &&
-                                        selectedImages.map((imageSrc, idx) => {
-                                            return (
-                                                <div key={imageSrc}>
-                                                    <img src={imageSrc} width="150" height="150" alt="upload" />
-                                                    <button onClick={() => removeImages(imageSrc, idx)}
-                                                    >Delete
-                                                    </button>
-                                                    <p>{idx + 1}</p>
-                                                </div>
-                                            )
-                                        }
+                                        selectedImages.map((imageSrc, idx) => (
+                                            <div key={idx}>
+                                                <img src={imageSrc} width="150" height="150" alt="upload" />
+                                                <button onClick={() => removeImages(imageSrc, idx)}
+                                                >Delete
+                                                </button>
+                                                <p>{idx + 1}</p>
+                                            </div>
+                                        )
                                         )}
                                     <Button
                                         variant="contained" component="label" >
@@ -155,6 +155,20 @@ export function FormProduct({ handleSubmit, handleChange,
                         >
                             {type}
                         </Button>
+
+                        {/* Delete */}
+                        {type === 'Update' &&
+                            // <Link to={'/'}>
+                            <Link to={`/marketplace/product/delete/${inputs.slug}`}>
+                                <Button
+                                    fullWidth
+                                    variant="contained"
+                                    sx={{ mt: 3, mb: 2, bgcolor: 'red' }}
+                                >
+                                    Delete
+                                </Button>
+                            </Link>
+                        }
 
                     </Box>
                 </Box>

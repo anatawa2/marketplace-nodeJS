@@ -20,7 +20,6 @@ const productSchema = new Schema({
     slug: String,
     owner: String,
     images: [{ type: String, default: null }],
-    date: String,
     category: String,
     condition: String,
 }, { timestamps: true, })

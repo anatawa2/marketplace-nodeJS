@@ -15,7 +15,7 @@ function DelProduct() {
         const { data } = await delAxios(endpoint)
         if (data.err) return Swal.err(data.err)
         Swal.ok()
-        navigate('/')
+        navigate('/', { replace: true })
     }
 
     useEffect(() => {

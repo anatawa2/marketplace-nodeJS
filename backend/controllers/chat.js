@@ -9,8 +9,7 @@ module.exports.onChatRoom = async (req, res) => {
 
         const user = await User.findOne({ email: req.user.email })
         const recipient = await User.findById({ _id: req.params.id }) //crash if not found 
-        if (user._id == req.params.id) return //cant talk to myself
-
+        if (user._id == req.params.id) return //cant talk to myself 
         const chatLists = user.chat_lists
         let currentRoom = ''
         let inbox = []
@@ -61,7 +60,7 @@ module.exports.onChatRoom = async (req, res) => {
         })
 
     } catch (err) {
-        res.status(422).json({ err: err })
+        res.json({ err: err })
     }
 }
 
@@ -88,16 +87,19 @@ module.exports.sendMessages = async (req, res) => {
         sender.name = name2
         sender.avatar = avatar2
         sender.sentBy = messages.user
+        sender.sent = ''                        //to prevent unsave if user sent same data
         sender.sent = messages.message
 
         recipient.owner = _id2
         recipient.name = name1
         recipient.avatar = avatar1
         recipient.sentBy = messages.user
+        recipient.sent = ''                     //to prevent unsave if user sent same data
         recipient.sent = messages.message
 
         sender.save()
         recipient.save()
+
 
         // History
         let saveHistory = await Chat.findOne({ chat_room: chatRoom })
@@ -110,7 +112,7 @@ module.exports.sendMessages = async (req, res) => {
         return res.json({ status: "ok" })
 
     } catch (err) {
-        res.status(422).json({ err: err })
+        res.json({ err: err })
     }
 
 }
@@ -130,7 +132,7 @@ module.exports.myInbox = async (req, res) => {
         return res.json({ status: "ok", inbox: inbox })
 
     } catch (err) {
-        res.status(422).json({ err: err })
+        res.json({ err: err })
     }
 
 
@@ -150,7 +152,7 @@ module.exports.chatNotify = async (req, res) => {
         return res.json({ status: "ok", inbox: inbox })
 
     } catch (err) {
-        res.status(422).json({ err: err })
+        res.json({ err: err })
     }
 }
 
@@ -171,6 +173,6 @@ module.exports.clickToSeen = async (req, res) => {
         return res.json({ status: "ok" })
 
     } catch (err) {
-        res.status(422).json({ err: err })
+        res.json({ err: err })
     }
 }

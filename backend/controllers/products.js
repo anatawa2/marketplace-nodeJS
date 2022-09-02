@@ -4,9 +4,6 @@ const Category = require('../models/Category')
 const { slugify } = require('../utils/stringUtil')
 const qs = require('qs');
 
-let a = new Date(Date.now())
-let dateUTC = a.toUTCString().slice(0, 16)
-
 module.exports.addProduct = async (req, res) => {
 
     try {
@@ -32,7 +29,6 @@ module.exports.addProduct = async (req, res) => {
             price: data.price,
             category: data.category,
             condition: data.condition,
-            date: dateUTC,
             images: images
         })
 
@@ -53,7 +49,7 @@ module.exports.addProduct = async (req, res) => {
         res.status(201).json({ status: "ok", slug: addProduct.slug })
 
     } catch (err) {
-        res.status(404).json({ err: err })
+        res.json({ err: err })
     }
 
 }
@@ -64,7 +60,7 @@ module.exports.getRandom = async (req, res) => {
         const product = await Product.find()
         res.json({ status: 'ok', product: product.reverse() })
     } catch (err) {
-        res.status(404).json({ err: err })
+        res.json({ err: err })
     }
 }
 
@@ -85,7 +81,7 @@ module.exports.searchProduct = async (req, res) => {
         })
         res.json({ status: 'ok', product: product.reverse() })
     } catch (err) {
-        res.status(404).json({ err: err })
+        res.json({ err: err })
     }
 }
 
@@ -182,7 +178,7 @@ module.exports.updateProduct = async (req, res) => {
             {
                 name: name, desc: desc, price: price, slug: newSlug,
                 images: updateImages, category: category,
-                condition: condition, data: dateUTC
+                condition: condition
             },
             { new: true }, (err, data) => {
                 if (!err) return res.json({ status: "ok", slug: newSlug })

@@ -5,7 +5,7 @@ import {
     CardMedia, Typography
 } from '@mui/material'
 
-function ListsProducts({ listsItem, category }) {
+function ListsProducts({ listsItem, category, page }) {
 
     function numberWithCommas(x) {
         return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -15,8 +15,25 @@ function ListsProducts({ listsItem, category }) {
         cursor: "pointer"
     }
 
+    let bg, bdl, bdc, frame
+    if (page === 'profile') {
+        bg = '#242526'
+        frame = '1px solid #393A3B'
+    } else { //home & category
+        bg = '#18191A'
+        bdl = 1
+        bdc = '#393A3B' 
+    }
+
     return (
-        <Box sx={{ bgcolor: '#18191A', p: 4, borderLeft: 1, borderColor: '#393A3B', minHeight: '100%' }}>
+        <Box sx={{
+            bgcolor: bg,
+            minHeight: '100%',
+            p: 4,
+            borderLeft: bdl,
+            borderColor: bdc,
+            border: frame,
+        }}>
             <Typography variant='h6' sx={{ mb: 3 }}>
                 {category ? category : "Today's picks"}
             </Typography>
@@ -27,7 +44,11 @@ function ListsProducts({ listsItem, category }) {
                             onClick={() => localStorage.setItem('scrollPosition', window.pageYOffset)}
                         >
                             <Card
-                                sx={{ display: 'flex', flexDirection: 'column', boxShadow: 'none' }}
+                                sx={{
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    boxShadow: 'none'
+                                }}
                             >
                                 <CardMedia
                                     component="img"
@@ -36,7 +57,7 @@ function ListsProducts({ listsItem, category }) {
                                     image={data.images && (data.images[0])}
                                     alt="img"
                                 />
-                                <CardContent sx={{ bgcolor: '#18191A' }}>
+                                <CardContent sx={{ bgcolor: bg }}>
                                     <Typography variant="h6" >
                                         ฿ {numberWithCommas(data.price)}
                                     </Typography >
